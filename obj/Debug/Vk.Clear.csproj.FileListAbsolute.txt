@@ -1,0 +1,17 @@
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.csprojResolveAssemblyReference.cache
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.Form1.resources
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.csproj.GenerateResource.Cache
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Vk.Clear.exe
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Vk.Clear.pdb
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Newtonsoft.Json.dll
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\VkApi.dll
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\VK.dll
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\VkApi.pdb
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\VkApi.xml
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Newtonsoft.Json.xml
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.exe
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.pdb
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Vk.Clear.exe.manifest
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Vk.Clear.application
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.exe.manifest
+D:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.application
