@@ -1,975 +1,642 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using VkApi;
 using Newtonsoft.Json.Linq;
+using VkApi;
 
 namespace Vk.Clear
 {
     public class Work : ApiVk
     {
-        private string v = "5.44";
+        private readonly string _v;
 
-        private Form1 form;
+        private Form1 _form;
 
-        private int wallCount;
+        private int _wallCount;
 
-        private int photoCount;
+        private int _photoCount;
 
-        private int videoCount;
+        private int _videoCount;
 
-        private int messagesCount;
+        private int _messagesCount;
 
-        private int bannedCount;
+        private int _bannedCount;
 
-        private int boardTopicsCount;
+        private int _boardTopicsCount;
 
-        private int notesCount;
+        private int _notesCount;
 
-        private int followersCount;
+        private int _followersCount;
 
-        private string manager = "";
+        private string _manager = "";
 
-        private int managerCount;
+        private int _managerCount;
 
-        private int i;
+        private int _i;
 
-        private bool delSavePhoto;
+        public bool DelSavePhoto { get; set; }
 
-        private bool delAlbumVideo;
+        public bool DelAlbumVideo { get; set; }
 
-        private bool delBanned;
+        public bool DelBanned { get; set; }
 
-        private bool delWallPhotoGroup;
+        public bool DelWallPhotoGroup { get; set; }
 
-        public bool DelSavePhoto
+        public Work(string v = "5.44")
         {
-            get
-            {
-                return this.delSavePhoto;
-            }
-            set
-            {
-                this.delSavePhoto = value;
-            }
+            _v = v;
         }
 
-        public bool DelAlbumVideo
+        public void StatsTrackVisitor()
         {
-            get
-            {
-                return this.delAlbumVideo;
-            }
-            set
-            {
-                this.delAlbumVideo = value;
-            }
+            Send("stats.trackVisitor", "", _v);
         }
 
-        public bool DelBanned
+        public void AddForms(Form1 form)
         {
-            get
-            {
-                return this.delBanned;
-            }
-            set
-            {
-                this.delBanned = value;
-            }
+            _form = form;
         }
 
-        public bool DelWallPhotoGroup
+        public void Groups()
         {
-            get
-            {
-                return this.delWallPhotoGroup;
-            }
-            set
-            {
-                this.delWallPhotoGroup = value;
-            }
-        }
-
-        public Work()
-        {
-        }
-
-        public Work(string _v)
-        {
-            this.v = _v;
-        }
-
-        public void statsTrackVisitor()
-        {
-            base.Send("stats.trackVisitor", "", this.v);
-        }
-
-        public void addForms(Form1 form)
-        {
-            this.form = form;
-        }
-
-        public void groups()
-        {
-            this.enabledButton(false);
-            JObject jObject = base.Send("groups.get", "", this.v);
+            EnabledButton(false);
+            JObject jObject = Send("groups.get", "", _v);
             int num = jObject["response"]["count"].Value<int>();
-            foreach (JToken current in ((IEnumerable<JToken>)jObject["response"]["items"]))
+            foreach (JToken current in jObject["response"]["items"])
             {
-                int arg_79_1 = current.Value<int>();
-                int num2 = this.i;
-                this.i = num2 + 1;
-                this.leaveGroups(arg_79_1, num2, num);
+                int groupId = current.Value<int>();
+                LeaveGroups(groupId, _i++, num);
             }
             if (num > 0)
-            {
-                this.groups();
-            }
-            this.enabledButton(true);
-            this.writeLog("Вышли");
-            this.i = 0;
+                Groups();
+            EnabledButton(true);
+            WriteLog("Вышли");
+            _i = 0;
         }
 
-        public void groupsBanned(object group_id)
+        public void GroupsBanned(object groupId)
         {
-            this.enabledButton(false);
-            int num = Math.Abs(int.Parse(group_id.ToString()));
-            JObject jObject = base.Send("groups.getBanned", "group_id=" + num + "&count=200", this.v);
-            int num2 = jObject["response"]["count"].Value<int>();
-            this.bannedCount = ((this.bannedCount == 0) ? num2 : this.bannedCount);
-            num2 = ((num2 > 200) ? 200 : num2);
-            for (int i = 0; i < num2; i++)
-            {
-                int num3 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_D5_1 = num;
-                int arg_D5_2 = num3;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.groupsUnbanUser(arg_D5_1, arg_D5_2, num4, this.bannedCount);
-            }
-            if (num2 > 0)
-            {
-                this.groupsBanned(group_id);
-            }
-            this.i = 0;
-            this.bannedCount = 0;
-            this.writeLog("Пользователи в группе разбаненны");
-            this.enabledButton(true);
-        }
-
-        public void friends()
-        {
-            this.enabledButton(false);
-            JObject jObject = base.Send("friends.get", "", this.v);
+            EnabledButton(false);
+            int groupId2 = Math.Abs(int.Parse(groupId.ToString()));
+            JObject jObject = Send("groups.getBanned", "group_id=" + groupId2 + "&count=200", _v);
             int count = jObject["response"]["count"].Value<int>();
-            foreach (JToken current in ((IEnumerable<JToken>)jObject["response"]["items"]))
+            _bannedCount = _bannedCount == 0 ? count : _bannedCount;
+            count = count > 200 ? 200 : count;
+            for (int i = 0; i < count; i++)
             {
-                int arg_79_1 = current.Value<int>();
-                int num = this.i;
-                this.i = num + 1;
-                this.friendsDelete(arg_79_1, num, count);
+                int userId = jObject["response"]["items"][i]["id"].Value<int>();
+                GroupsUnbanUser(groupId2, userId, _i, _bannedCount);
             }
-            this.writeLog("У Вас, больше нет друзей");
-            this.i = 0;
-            this.enabledButton(true);
+            if (count > 0)
+                GroupsBanned(groupId);
+            _i = 0;
+            _bannedCount = 0;
+            WriteLog("Пользователи в группе разбаненны");
+            EnabledButton(true);
         }
 
-        public void wall(object owner_id)
+        public void Friends()
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("wall.get", "owner_id=" + owner_id + "&count=100", this.v);
+            EnabledButton(false);
+            JObject jObject = Send("friends.get", "", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            foreach (JToken current in jObject["response"]["items"])
+            {
+                int userId = current.Value<int>();
+                FriendsDelete(userId, _i++, count);
+            }
+            WriteLog("У Вас, больше нет друзей");
+            _i = 0;
+            EnabledButton(true);
+        }
+
+        public void Wall(object ownerId)
+        {
+            EnabledButton(false);
+            JObject jObject = Send("wall.get", "owner_id=" + ownerId + "&count=100", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _wallCount = _wallCount == 0 ? count : _wallCount;
+            count = count >= 100 ? 100 : count;
+            for (int i = 0; i < count; i++)
+            {
+                int postId = jObject["response"]["items"][i]["id"].Value<int>();
+                int ownwerId = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                WallDelete(ownwerId, postId, _i, _wallCount);
+            }
+            if (count > 0)
+                Wall(ownerId);
+            _wallCount = 0;
+            WriteLog("Чистка стены, закончена");
+            _i = 0;
+            EnabledButton(true);
+        }
+
+        public void Photos(object ownerId)
+        {
+            EnabledButton(false);
+            JObject jObject = Send("photos.getAll", "owner_id=" + ownerId + "&count=200", _v);
             int num = jObject["response"]["count"].Value<int>();
-            this.wallCount = ((this.wallCount == 0) ? num : this.wallCount);
-            num = ((num >= 100) ? 100 : num);
+            _photoCount = _photoCount == 0 ? num : _photoCount;
+            num = num >= 200 ? 200 : num;
             for (int i = 0; i < num; i++)
             {
-                int num2 = jObject["response"]["items"][i]["id"].Value<int>();
-                int num3 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int arg_EC_1 = num3;
-                int arg_EC_2 = num2;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.wallDelete(arg_EC_1, arg_EC_2, num4, this.wallCount);
+                int ownerIdp = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                int photoId = jObject["response"]["items"][i]["id"].Value<int>();
+                PhotoDelete(ownerIdp, photoId, _i, _photoCount);
             }
             if (num > 0)
+                Photos(ownerId);
+            WriteLog("Фотографии удаленны");
+            _i = 0;
+            _photoCount = 0;
+            if (DelSavePhoto && ownerId.ToString() == ID.ToString())
             {
-                this.wall(owner_id);
+                WriteLog("Начинаем парсить...");
+                PhotosSaved();
             }
-            this.wallCount = 0;
-            this.writeLog("Чистка стены, закончена");
-            this.i = 0;
-            this.enabledButton(true);
+            else if (DelWallPhotoGroup)
+            {
+                WriteLog("Начинаем парсить...");
+                PhotosWall(ownerId.ToString());
+            }
+            EnabledButton(true);
         }
 
-        public void photos(object owner_id)
-        {
-            this.enabledButton(false);
-            JObject jObject = base.Send("photos.getAll", "owner_id=" + owner_id + "&count=200", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.photoCount = ((this.photoCount == 0) ? num : this.photoCount);
-            num = ((num >= 200) ? 200 : num);
-            for (int i = 0; i < num; i++)
-            {
-                int num2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int num3 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_F7_1 = num2;
-                int arg_F7_2 = num3;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.photoDelete(arg_F7_1, arg_F7_2, num4, this.photoCount, "Удалено фотографий ");
-            }
-            if (num > 0)
-            {
-                this.photos(owner_id);
-            }
-            this.writeLog("Фотографии удаленны");
-            this.i = 0;
-            this.photoCount = 0;
-            if (this.delSavePhoto && owner_id.ToString() == base.ID.ToString())
-            {
-                this.writeLog("Начинаем парсить...");
-                this.photosSaved();
-            }
-            else if (this.DelWallPhotoGroup)
-            {
-                this.writeLog("Начинаем парсить...");
-                this.photosWall(owner_id.ToString());
-            }
-            this.enabledButton(true);
-        }
-
-        private void photosWall(string owner_id)
+        private void PhotosWall(string ownerId)
         {
             Thread.Sleep(1000);
-            JObject jObject = base.Send("photos.get", "owner_id=" + owner_id + "&album_id=wall&count=200&rev=1", "5.44");
+            JObject jObject = Send("photos.get", "owner_id=" + ownerId + "&album_id=wall&count=200&rev=1");
             int num = jObject["response"]["count"].Value<int>();
-            this.photoCount = ((this.photoCount == 0) ? num : this.photoCount);
-            num = ((num > 200) ? 200 : num);
+            _photoCount = _photoCount == 0 ? num : _photoCount;
+            num = num > 200 ? 200 : num;
             for (int i = 1; i < num; i++)
             {
-                int num2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int num3 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_F9_1 = num2;
-                int arg_F9_2 = num3;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.photoDelete(arg_F9_1, arg_F9_2, num4, this.photoCount, "Удалено фотографий ");
+                int ownerIdPw = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                int photoId = jObject["response"]["items"][i]["id"].Value<int>();
+                PhotoDelete(ownerIdPw, photoId, _i, _photoCount);
             }
-            if (num > 0 && this.i < 1000)
-            {
-                this.photosWall(owner_id);
-            }
-            this.i = 0;
-            this.photoCount = 0;
-            this.writeLog("Удалили (максимум 1000) за раз");
+            if (num > 0 && _i < 1000)
+                PhotosWall(ownerId);
+            _i = 0;
+            _photoCount = 0;
+            WriteLog("Удалили (максимум 1000) за раз");
         }
 
-        public void photosAlbum(object owner_id)
+        public void PhotosAlbum(object ownerId)
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("photos.getAlbums", "owner_id=" + owner_id, this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            for (int i = 0; i < num; i++)
+            EnabledButton(false);
+            JObject jObject = Send("photos.getAlbums", "owner_id=" + ownerId, _v);
+            int count = jObject["response"]["count"].Value<int>();
+            for (int i = 0; i < count; i++)
             {
-                int num2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int num3 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_C0_1 = num2;
-                int arg_C0_2 = num3;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.photosAlbumDelete(arg_C0_1, arg_C0_2, num4, num);
+                int ownerIdPa = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                int photoId = jObject["response"]["items"][i]["id"].Value<int>();
+                PhotosAlbumDelete(ownerIdPa, photoId, _i, count);
             }
-            this.writeLog("Альбомы удалены");
-            this.i = 0;
-            this.enabledButton(true);
+            WriteLog("Альбомы удалены");
+            _i = 0;
+            EnabledButton(true);
         }
 
-        public void video(object owner_id)
+        public void Video(object ownerId)
         {
-            this.enabledButton(false);
-            this.writeLog("Получаем видео");
+            EnabledButton(false);
+            WriteLog("Получаем видео");
             Thread.Sleep(500);
-            JObject jObject = base.Send("video.get", "owner_id=" + owner_id + "&count=200", this.v);
+            JObject jObject = Send("video.get", "owner_id=" + ownerId + "&count=200", _v);
             JArray jArray = jObject["response"]["items"].Value<JArray>();
-            int num = jObject["response"]["count"].Value<int>();
-            this.videoCount = ((this.videoCount == 0) ? num : this.videoCount);
+            int count = jObject["response"]["count"].Value<int>();
+            _videoCount = _videoCount == 0 ? count : _videoCount;
             for (int i = 0; i < jArray.Count; i++)
             {
-                int num2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int num3 = jObject["response"]["items"][i]["id"].Value<int>();
-                int num4 = int.Parse(owner_id.ToString());
-                int arg_122_1 = num3;
-                int arg_122_2 = num2;
-                int arg_122_3 = num4;
-                int num5 = this.i;
-                this.i = num5 + 1;
-                this.videoDelete(arg_122_1, arg_122_2, arg_122_3, num5, this.videoCount);
+                int ownerIdVideo = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                int videoId = jObject["response"]["items"][i]["id"].Value<int>();
+                int targetId = int.Parse(ownerId.ToString());
+                VideoDelete(videoId, ownerIdVideo, targetId, _i, _videoCount);
             }
-            if (num > 0)
-            {
-                this.video(owner_id);
-            }
-            this.writeLog("Видео удаленны");
-            this.videoCount = 0;
-            this.i = 0;
-            if (this.delAlbumVideo)
-            {
-                this.videoAlbum(owner_id);
-            }
-            this.enabledButton(true);
+            if (count > 0)
+                Video(ownerId);
+            WriteLog("Видео удаленны");
+            _videoCount = 0;
+            _i = 0;
+            if (DelAlbumVideo)
+                VideoAlbum(ownerId);
+            EnabledButton(true);
         }
 
-        public void audio(object owner_id)
+        public void Audio(object ownerId)
         {
-            this.enabledButton(false);
-            this.writeLog("Удаление аудиозаписей не работает");
-            this.enabledButton(true);
+            EnabledButton(false);
+            WriteLog("Удаление аудиозаписей не работает");
+            EnabledButton(true);
         }
 
-        public void messages()
+        public void Messages()
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("messages.getDialogs", "count=200", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.messagesCount = ((this.messagesCount == 0) ? num : this.messagesCount);
-            num = ((num > 200) ? 200 : num);
-            for (int i = 0; i < num; i++)
+            EnabledButton(false);
+            JObject jObject = Send("messages.getDialogs", "count=200", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _messagesCount = _messagesCount == 0 ? count : _messagesCount;
+            count = count > 200 ? 200 : count;
+            for (int i = 0; i < count; i++)
             {
-                int num2 = (jObject["response"]["items"][i]["message"]["user_id"] ?? -1).Value<int>();
-                int num3 = (jObject["response"]["items"][i]["message"]["chat_id"] ?? -1).Value<int>();
-                int arg_10F_1 = num2;
-                int arg_10F_2 = num3;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.messagesDelete(arg_10F_1, arg_10F_2, num4, this.messagesCount);
+                int userId = (jObject["response"]["items"][i]["message"]["user_id"] ?? -1).Value<int>();
+                int chatId = (jObject["response"]["items"][i]["message"]["chat_id"] ?? -1).Value<int>();
+                MessagesDelete(userId, chatId, _i, _messagesCount);
             }
-            if (num > 0)
-            {
-                this.messages();
-            }
-            this.i = 0;
-            this.messagesCount = 0;
-            this.writeLog("Все диалоги удалены");
-            this.enabledButton(true);
+            if (count > 0)
+                Messages();
+            _i = 0;
+            _messagesCount = 0;
+            WriteLog("Все диалоги удалены");
+            EnabledButton(true);
         }
 
-        public void newsfeedLists()
+        public void NewsfeedLists()
         {
-            if (this.form.ButtonEnabled)
+            EnabledButton(false);
+            JObject jObject = Send("newsfeed.getLists", "", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            for (int i = 0; i < count; i++)
             {
-                this.enabledButton(false);
+                int listId = jObject["response"]["items"][i]["id"].Value<int>();
+                NewsfeedDelete(listId, i, count);
             }
-            JObject jObject = base.Send("newsfeed.getLists", "", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            for (int i = 0; i < num; i++)
-            {
-                int list_id = jObject["response"]["items"][i]["id"].Value<int>();
-                this.newsfeedDelete(list_id, i, num);
-            }
-            this.writeLog("Все списки удалены");
-            this.enabledButton(true);
+            WriteLog("Все списки удалены");
+            EnabledButton(true);
         }
 
-        public void accountBanned()
+        public void AccountBanned()
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("account.getBanned", "count=200", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.bannedCount = ((this.bannedCount == 0) ? num : this.bannedCount);
-            num = ((num > 200) ? 200 : num);
-            for (int i = 0; i < num; i++)
+            EnabledButton(false);
+            JObject jObject = Send("account.getBanned", "count=200", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _bannedCount = _bannedCount == 0 ? count : _bannedCount;
+            count = count > 200 ? 200 : count;
+            for (int i = 0; i < count; i++)
             {
-                int num2 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_B1_1 = num2;
-                int num3 = this.i;
-                this.i = num3 + 1;
-                this.accountUnban(arg_B1_1, num3, this.bannedCount);
+                int userId = jObject["response"]["items"][i]["id"].Value<int>();
+                AccountUnban(userId, _i, _bannedCount);
             }
-            if (num > 0)
-            {
-                this.accountBanned();
-            }
-            this.i = 0;
-            this.bannedCount = 0;
-            this.writeLog("Ваш черный список чист");
-            this.enabledButton(true);
+            if (count > 0)
+                AccountBanned();
+            _i = 0;
+            _bannedCount = 0;
+            WriteLog("Ваш черный список чист");
+            EnabledButton(true);
         }
 
-        public void boardTopics(object group_id)
+        public void BoardTopics(object groupId)
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("board.getTopics", "group_id=" + group_id + "&count=100", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.boardTopicsCount = ((this.boardTopicsCount == 0) ? num : this.boardTopicsCount);
-            num = ((num > 100) ? 100 : num);
-            int num2 = int.Parse(group_id.ToString());
-            for (int i = 0; i < num; i++)
+            EnabledButton(false);
+            JObject jObject = Send("board.getTopics", "group_id=" + groupId + "&count=100", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _boardTopicsCount = _boardTopicsCount == 0 ? count : _boardTopicsCount;
+            count = count > 100 ? 100 : count;
+            int groupIdInt = int.Parse(groupId.ToString());
+            for (int i = 0; i < count; i++)
             {
-                int num3 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_C5_1 = num2;
-                int arg_C5_2 = num3;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.boardDeleteTopic(arg_C5_1, arg_C5_2, num4, this.boardTopicsCount);
+                int topicId = jObject["response"]["items"][i]["id"].Value<int>();
+                BoardDeleteTopic(groupIdInt, topicId, _i, _boardTopicsCount);
             }
-            if (num > 0)
-            {
-                this.boardTopics(group_id);
-            }
-            this.i = 0;
-            this.boardTopicsCount = 0;
-            this.writeLog("Все обсуждения удалены");
-            this.enabledButton(true);
+            if (count > 0)
+                BoardTopics(groupId);
+            _i = 0;
+            _boardTopicsCount = 0;
+            WriteLog("Все обсуждения удалены");
+            EnabledButton(true);
         }
 
-        public void notes()
+        public void Notes()
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("notes.get", "count=100", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.notesCount = ((this.notesCount == 0) ? num : this.notesCount);
-            num = ((num > 100) ? 100 : num);
-            for (int i = 0; i < num; i++)
+            EnabledButton(false);
+            JObject jObject = Send("notes.get", "count=100", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _notesCount = _notesCount == 0 ? count : _notesCount;
+            count = count > 100 ? 100 : count;
+            for (int i = 0; i < count; i++)
             {
-                int num2 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_AB_1 = num2;
-                int num3 = this.i;
-                this.i = num3 + 1;
-                this.notesDelete(arg_AB_1, num3, this.notesCount);
+                int noteId = jObject["response"]["items"][i]["id"].Value<int>();
+                NotesDelete(noteId, _i, _notesCount);
             }
-            if (num > 0)
-            {
-                this.notes();
-            }
-            this.i = 0;
-            this.notesCount = 0;
-            this.writeLog("Заметки удалены");
-            this.enabledButton(true);
+            if (count > 0)
+                Notes();
+            _i = 0;
+            _notesCount = 0;
+            WriteLog("Заметки удалены");
+            EnabledButton(true);
         }
 
-        public void docs(object owner_id)
+        public void Docs(object ownerId)
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("docs.get", "owner_id=" + owner_id, this.v);
+            EnabledButton(false);
+            JObject jObject = Send("docs.get", "owner_id=" + ownerId, _v);
             string text = (jObject["error"] ?? 0).ToString();
-            if (text.IndexOf("15") >= 0)
-            {
-                this.writeLog("Документы в группе отключены");
-            }
+            if ("15".IndexOf(text, StringComparison.Ordinal) >= 0)
+                WriteLog("Документы в группе отключены");
             else
             {
-                int num = jObject["response"]["count"].Value<int>();
-                for (int i = 0; i < num; i++)
+                int count = jObject["response"]["count"].Value<int>();
+                for (int i = 0; i < count; i++)
                 {
-                    int doc_id = jObject["response"]["items"][i]["id"].Value<int>();
-                    int owner_id2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                    this.docsDelete(doc_id, owner_id2, i, num);
+                    int docId = jObject["response"]["items"][i]["id"].Value<int>();
+                    int ownerId2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                    DocsDelete(docId, ownerId2, i, count);
                 }
-                this.writeLog("Все документы удалены");
+                WriteLog("Все документы удалены");
             }
-            this.enabledButton(true);
+            EnabledButton(true);
         }
 
-        public void followers()
+        public void Followers()
         {
-            this.enabledButton(false);
-            JObject jObject = base.Send("users.getFollowers", "count=1000", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.followersCount = ((this.followersCount == 0) ? num : this.followersCount);
-            num = ((num > 1000) ? 1000 : num);
-            for (int i = 0; i < num; i++)
+            EnabledButton(false);
+            JObject jObject = Send("users.getFollowers", "count=1000", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _followersCount = _followersCount == 0 ? count : _followersCount;
+            count = count > 1000 ? 1000 : count;
+            for (int i = 0; i < count; i++)
             {
-                int num2 = jObject["response"]["items"][i].Value<int>();
-                int arg_A7_1 = num2;
-                int num3 = this.i;
-                this.i = num3 + 1;
-                this.followersDelete(arg_A7_1, num3, this.followersCount);
+                int userId = jObject["response"]["items"][i].Value<int>();
+                FollowersDelete(userId, _i, _followersCount);
             }
-            if (num > 0)
-            {
-                this.followers();
-            }
-            this.i = 0;
-            this.followersCount = 0;
-            this.writeLog("Все подписчики удалены");
-            this.enabledButton(true);
+            if (count > 0)
+                Followers();
+            _i = 0;
+            _followersCount = 0;
+            WriteLog("Все подписчики удалены");
+            EnabledButton(true);
         }
 
-        public void groupsMembersDeleted(object group_id)
+        public void GroupsMembersDeleted(object groupId)
         {
-            this.enabledButton(false);
-            this.writeLog("Начинаем...");
+            EnabledButton(false);
+            WriteLog("Начинаем...");
             List<int> list = new List<int>();
-            int num = 0;
-            JObject members = this.getMembers(group_id, ref list, num);
-            int num2 = members["response"]["count"].Value<int>();
-            int num3 = (int)Math.Ceiling((double)num2 / 1000.0);
-            for (int i = 0; i < num3; i++)
+            int offset = 0;
+            JObject members = GetMembers(groupId, ref list, offset);
+            int countMembers = members["response"]["count"].Value<int>();
+            int repeat = (int)Math.Ceiling(countMembers / 1000.0);
+            for (int i = 0; i < repeat; i++)
             {
-                this.getMembers(group_id, ref list, num);
-                num += 1000;
+                GetMembers(groupId, ref list, offset);
+                offset += 1000;
             }
             int count = list.Count;
             for (int j = 0; j < count; j++)
-            {
-                this.groupsRemoveUser((int)group_id, list[j], j, count);
-            }
-            this.writeLog("Мертвые аккаунты удаленны");
-            this.enabledButton(true);
+                GroupsRemoveUser((int) groupId, list[j], j, count);
+            WriteLog("Мертвые аккаунты удаленны");
+            EnabledButton(true);
         }
 
-        private JObject getMembers(object group_id, ref List<int> deletedUsers, int offset)
+        private JObject GetMembers(object groupId, ref List<int> deletedUsers, int offset)
         {
             Thread.Sleep(500);
-            JObject jObject = base.Send("groups.getMembers", string.Concat(new object[]
-            {
-                    "group_id=",
-                    group_id,
-                    "&offset=",
-                    offset,
-                    "&fields=first_name"
-            }), "5.44");
-            this.addDeletedUsers(ref deletedUsers, jObject);
+            JObject jObject = Send("groups.getMembers", param: string.Concat("group_id=", groupId, "&offset=", offset, "&fields=first_name"));
+            AddDeletedUsers(ref deletedUsers, jObject);
             return jObject;
         }
 
-        private void addDeletedUsers(ref List<int> del, JObject get)
+        private void AddDeletedUsers(ref List<int> del, JObject get)
         {
             int count = JArray.Parse(get["response"]["items"].ToString()).Count;
             for (int i = 0; i < count; i++)
             {
-                string a = (get["response"]["items"][i]["deactivated"] ?? "").ToString();
-                if (a == "deleted")
+                string deactivated = (get["response"]["items"][i]["deactivated"] ?? "").ToString();
+                if (deactivated == "deleted")
                 {
                     del.Add(get["response"]["items"][i]["id"].Value<int>());
                 }
-                else if (this.DelBanned && a == "banned")
+                else if (DelBanned && deactivated == "banned")
                 {
                     del.Add(get["response"]["items"][i]["id"].Value<int>());
                 }
-                this.writeLog("Найденно мертвых " + del.Count);
+                WriteLog("Найденно мертвых " + del.Count);
             }
         }
 
-        public void groupsMembers(object group_id)
+        public void GroupsMembers(object groupId)
         {
-            this.enabledButton(false);
-            this.manager = ((this.manager.Length == 0) ? this.groupsManagers(group_id, ref this.managerCount) : this.manager);
-            JObject jObject = base.Send("groups.getMembers", "group_id=" + group_id, this.v);
-            int num = jObject["response"]["count"].Value<int>() - this.managerCount;
-            foreach (JToken current in ((IEnumerable<JToken>)jObject["response"]["items"]))
+            EnabledButton(false);
+            _manager = _manager.Length == 0 ? GroupsManagers(groupId, ref _managerCount) : _manager;
+            JObject jObject = Send("groups.getMembers", "group_id=" + groupId, _v);
+            int count = jObject["response"]["count"].Value<int>() - _managerCount;
+            foreach (JToken current in jObject["response"]["items"])
             {
-                int num2 = int.Parse(group_id.ToString());
-                int num3 = current.Value<int>();
-                if (this.manager.IndexOf(num3.ToString()) < 0)
-                {
-                    int arg_D6_1 = num2;
-                    int arg_D6_2 = num3;
-                    int num4 = this.i;
-                    this.i = num4 + 1;
-                    this.groupsRemoveUser(arg_D6_1, arg_D6_2, num4, num);
-                }
+                int groupId2 = int.Parse(groupId.ToString());
+                int userId = current.Value<int>();
+                if (_manager.IndexOf(userId.ToString(), StringComparison.Ordinal) < 0)
+                    GroupsRemoveUser(groupId2, userId, _i++, count);
             }
-            if (num > 0)
-            {
-                this.groupsMembers(group_id);
-            }
-            this.i = 0;
-            this.manager = "";
-            this.managerCount = 0;
-            this.writeLog("Подписчики удалены");
-            this.enabledButton(true);
+            if (count > 0)
+                GroupsMembers(groupId);
+            _i = 0;
+            _manager = "";
+            _managerCount = 0;
+            WriteLog("Подписчики удалены");
+            EnabledButton(true);
         }
 
-        private void groupsRemoveUser(int group_id, int user_id, int i, int count)
+        private void GroupsRemoveUser(int groupId, int userId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("groups.removeUser", string.Concat(new object[]
-            {
-                    "group_id=",
-                    group_id,
-                    "&user_id=",
-                    user_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено подписчиков ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("groups.removeUser", string.Concat("group_id=", groupId, "&user_id=", userId), _v);
+            WriteLog(string.Concat("Удалено подписчиков ", i, " из ", count));
         }
 
-        private string groupsManagers(object group_id, ref int count)
+        private string GroupsManagers(object groupId, ref int count)
         {
-            JObject jObject = base.Send("groups.getMembers", "group_id=" + group_id + "&filter=managers", this.v);
+            if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
+            JObject jObject = Send("groups.getMembers", "group_id=" + groupId + "&filter=managers", _v);
             string text = "";
             count = jObject["response"]["count"].Value<int>();
             for (int i = 0; i < count; i++)
-            {
-                text = text + jObject["response"]["items"][i]["id"].ToString() + ",";
-            }
+                text = text + jObject["response"]["items"][i]["id"] + ",";
             return text.Substring(0, text.Length - 1);
         }
 
-        private void followersDelete(int user_id, int i, int count)
+        private void FollowersDelete(int userId, int i, int count)
         {
             Thread.Sleep(500);
-            JObject jObject = base.Send("account.banUser", "user_id=" + user_id, this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удаленно подписчиков ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("account.banUser", "user_id=" + userId, _v);
+            WriteLog(string.Concat("Удаленно подписчиков ", i, " из ", count));
         }
 
-        private void docsDelete(int doc_id, int owner_id, int i, int count)
+        private void DocsDelete(int docId, int ownerId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("docs.delete", string.Concat(new object[]
-            {
-                    "owner_id=",
-                    owner_id,
-                    "&doc_id=",
-                    doc_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено документов ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("docs.delete", string.Concat("owner_id=", ownerId, "&doc_id=", docId), _v);
+            WriteLog(string.Concat("Удалено документов ", i, " из ", count));
         }
 
-        private void notesDelete(int note_id, int i, int count)
+        private void NotesDelete(int noteId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("notes.delete", "note_id=" + note_id, this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено заметок ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("notes.delete", "note_id=" + noteId, _v);
+            WriteLog(string.Concat("Удалено заметок ", i, " из ", count));
         }
 
-        private void boardDeleteTopic(int group_id, int topic_id, int i, int count)
+        private void BoardDeleteTopic(int groupId, int topicId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("board.deleteTopic", string.Concat(new object[]
-            {
-                    "group_id=",
-                    group_id,
-                    "&topic_id=",
-                    topic_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено обсуждений ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("board.deleteTopic", string.Concat("group_id=", groupId, "&topic_id=", topicId), _v);
+            WriteLog(string.Concat("Удалено обсуждений ", i, " из ", count));
         }
 
-        private void accountUnban(int user_id, int i, int count)
+        private void AccountUnban(int userId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("account.unbanUser", "user_id=" + user_id, this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Убранно из бана: ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("account.unbanUser", "user_id=" + userId, _v);
+            WriteLog(string.Concat("Убранно из бана: ", i, " из ", count));
         }
 
-        private void likesDelete(string type, int item_id, int i, int count)
+        /*
+        private void LikesDelete(string type, int itemId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("likes.delete", string.Concat(new object[]
-            {
-                    "type=",
-                    type,
-                    "&item_id=",
-                    item_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено лайков ",
-                    i,
-                    " из ",
-                    count
-            }));
-        }
+            Send("likes.delete", string.Concat("type=", type, "&item_id=", itemId), _v);
+            WriteLog(string.Concat("Удалено лайков ", i, " из ", count));
+        }*/
 
-        private void newsfeedDelete(int list_id, int i, int count)
+        private void NewsfeedDelete(int listId, int i, int count)
         {
             Thread.Sleep(500);
-            JObject jObject = base.Send("newsfeed.deleteList", "list_id=" + list_id, this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено новостных списков ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("newsfeed.deleteList", "list_id=" + listId, _v);
+            WriteLog(string.Concat("Удалено новостных списков ", i, " из ", count));
         }
 
-        private int messageHistory(int user_id)
+        private int MessageHistory(int userId)
         {
             Thread.Sleep(1000);
-            JObject jObject = base.Send("messages.getHistory", "user_id=" + user_id, this.v);
+            JObject jObject = Send("messages.getHistory", "user_id=" + userId, _v);
             return jObject["response"]["count"].Value<int>();
         }
 
-        private void messagesDelete(int user_id, int chat_id, int i, int count)
+        private void MessagesDelete(int userId, int chatId, int i, int count)
         {
             Thread.Sleep(500);
-            int num = (chat_id > 0) ? chat_id : user_id;
-            if (chat_id > 0)
-            {
-                base.Send("messages.deleteDialog", "chat_id=" + num, this.v);
-            }
+            int dialogId = chatId > 0 ? chatId : userId;
+            if (chatId > 0)
+                Send("messages.deleteDialog", "chat_id=" + dialogId, _v);
             else
-            {
-                base.Send("messages.deleteDialog", "user_id=" + num, this.v);
-            }
-            if (user_id > 0 && this.messageHistory(user_id) > 10000 && chat_id < 0)
-            {
-                this.messagesDelete(user_id, chat_id, i, count);
-            }
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено диалогов ",
-                    i,
-                    " из ",
-                    count
-            }));
+                Send("messages.deleteDialog", "user_id=" + dialogId, _v);
+            if (userId > 0 && MessageHistory(userId) > 10000 && chatId < 0)
+                MessagesDelete(userId, chatId, i, count);
+            WriteLog(string.Concat("Удалено диалогов ", i, " из ", count));
         }
 
-        private void audioDelete(int owner_id, int audio_id, int i, int count)
+        /*
+        private void AudioDelete(int ownerId, int audioId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("audio.delete", string.Concat(new object[]
-            {
-                    "audio_id=",
-                    audio_id,
-                    "&owner_id=",
-                    owner_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено аудиозаписей ",
-                    i,
-                    " из ",
-                    count
-            }));
-        }
+            Send("audio.delete", string.Concat("audio_id=", audioId, "&owner_id=", ownerId), _v);
+            WriteLog(string.Concat("Удалено аудиозаписей ", i, " из ", count));
+        }*/
 
-        private void videoAlbum(object owner_id)
+        private void VideoAlbum(object ownerId)
         {
             Thread.Sleep(500);
-            JObject jObject = base.Send("video.getAlbums", "owner_id=" + owner_id + "&count=100", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.videoCount = ((this.videoCount == 0) ? num : this.videoCount);
-            num = ((num > 100) ? 100 : num);
-            for (int i = 0; i < num; i++)
+            JObject jObject = Send("video.getAlbums", "owner_id=" + ownerId + "&count=100", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _videoCount = _videoCount == 0 ? count : _videoCount;
+            count = count > 100 ? 100 : count;
+            for (int i = 0; i < count; i++)
             {
-                int owner_id2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int album_id = jObject["response"]["items"][i]["id"].Value<int>();
-                this.videoAlbumDelete(owner_id2, album_id, this.i, this.videoCount);
+                int ownerId2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                int albumId = jObject["response"]["items"][i]["id"].Value<int>();
+                VideoAlbumDelete(ownerId2, albumId, _i, _videoCount);
             }
-            if (num > 0)
-            {
-                this.videoAlbum(owner_id);
-            }
-            this.i = 0;
-            this.videoCount = 0;
-            this.writeLog("Видео и видеоальбомы удалены");
+            if (count > 0)
+                VideoAlbum(ownerId);
+            _i = 0;
+            _videoCount = 0;
+            WriteLog("Видео и видеоальбомы удалены");
         }
 
-        private void videoAlbumDelete(int owner_id, int album_id, int i, int count)
+        private void VideoAlbumDelete(int ownerId, int albumId, int i, int count)
         {
-            int num = (owner_id < 0) ? Math.Abs(owner_id) : 0;
-            base.Send("video.deleteAlbum", string.Concat(new object[]
-            {
-                    "group_id=",
-                    num,
-                    "&album_id=",
-                    album_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено видеоальбомов ",
-                    i,
-                    " из ",
-                    count
-            }));
+            int num = ownerId < 0 ? Math.Abs(ownerId) : 0;
+            Send("video.deleteAlbum", string.Concat("group_id=", num, "&album_id=", albumId), _v);
+            WriteLog(string.Concat("Удалено видеоальбомов ", i, " из ", count));
         }
 
-        private void videoDelete(int video_id, int owner_id, int target_id, int i, int count)
+        private void VideoDelete(int videoId, int ownerId, int targetId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("video.delete", string.Concat(new object[]
-            {
-                    "video_id=",
-                    video_id,
-                    "&owner_id=",
-                    owner_id,
-                    "&target_id=",
-                    target_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено видео ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("video.delete", string.Concat("video_id=", videoId, "&owner_id=", ownerId, "&target_id=", targetId), _v);
+            WriteLog(string.Concat("Удалено видео ", i, " из ", count));
         }
 
-        private void photosSaved()
+        private void PhotosSaved()
         {
-            JObject jObject = base.Send("photos.get", "album_id=saved", this.v);
-            int num = jObject["response"]["count"].Value<int>();
-            this.photoCount = ((this.photoCount == 0) ? num : this.photoCount);
-            num = ((num >= 1000) ? 1000 : num);
-            for (int i = 0; i < num; i++)
+            JObject jObject = Send("photos.get", "album_id=saved", _v);
+            int count = jObject["response"]["count"].Value<int>();
+            _photoCount = _photoCount == 0 ? count : _photoCount;
+            count = count >= 1000 ? 1000 : count;
+            for (int i = 0; i < count; i++)
             {
-                int num2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int num3 = jObject["response"]["items"][i]["id"].Value<int>();
-                int arg_E5_1 = num2;
-                int arg_E5_2 = num3;
-                int num4 = this.i;
-                this.i = num4 + 1;
-                this.photoDelete(arg_E5_1, arg_E5_2, num4, this.photoCount, "Удалено сохраненых фотографий ");
+                int ownerId2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
+                int phtoId = jObject["response"]["items"][i]["id"].Value<int>();
+                PhotoDelete(ownerId2, phtoId, _i, _photoCount, "Удалено сохраненых фотографий ");
             }
-            if (num > 0)
-            {
-                this.photosSaved();
-            }
-            this.writeLog("Сохраненые фотографии удалены");
-            this.i = 0;
-            this.photoCount = 0;
+            if (count > 0)
+                PhotosSaved();
+            WriteLog("Сохраненые фотографии удалены");
+            _i = 0;
+            _photoCount = 0;
         }
 
-        private void photosAlbumDelete(int owner_id, int album_id, int i, int count)
+        private void PhotosAlbumDelete(int ownerId, int albumId, int i, int count)
         {
             Thread.Sleep(500);
-            int num = (owner_id < 0) ? owner_id : 0;
-            base.Send("photos.deleteAlbum", string.Concat(new object[]
-            {
-                    "album_id=",
-                    album_id,
-                    "&group_id=",
-                    num
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удаленно альбомов ",
-                    i,
-                    " из ",
-                    count
-            }));
+            int num = ownerId < 0 ? ownerId : 0;
+            Send("photos.deleteAlbum", string.Concat("album_id=", albumId, "&group_id=", num), _v);
+            WriteLog(string.Concat("Удаленно альбомов ", i, " из ", count));
         }
 
-        private void photoDelete(int owner_id, int photo_id, int i, int count, string text = "Удалено фотографий ")
+        private void PhotoDelete(int ownerId, int photoId, int i, int count, string text = "Удалено фотографий ")
         {
             Thread.Sleep(1000);
-            base.Send("photos.delete", string.Concat(new object[]
-            {
-                    "owner_id=",
-                    owner_id,
-                    "&photo_id=",
-                    photo_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    text,
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("photos.delete", string.Concat("owner_id=", ownerId, "&photo_id=", photoId), _v);
+            WriteLog(string.Concat(text, i, " из ", count));
         }
 
-        private void friendsDelete(int user_id, int i, int count)
+        private void FriendsDelete(int userId, int i, int count)
         {
             Thread.Sleep(1000);
-            base.Send("friends.delete", "user_id=" + user_id, this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удаленно друзей ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("friends.delete", "user_id=" + userId, _v);
+            WriteLog(string.Concat("Удаленно друзей ", i, " из ", count));
         }
 
-        private void groupsUnbanUser(int group_id, int user_id, int i, int count)
+        private void GroupsUnbanUser(int groupId, int userId, int i, int count)
         {
             Thread.Sleep(500);
-            base.Send("groups.unbanUser", string.Concat(new object[]
-            {
-                    "group_id=",
-                    group_id,
-                    "&user_id=",
-                    user_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Убрано из бана ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("groups.unbanUser", string.Concat("group_id=", groupId, "&user_id=", userId), _v);
+            WriteLog(string.Concat("Убрано из бана ", i, " из ", count));
         }
 
-        private void leaveGroups(int group_id, int i, int count)
+        private void LeaveGroups(int groupId, int i, int count)
         {
             Thread.Sleep(1000);
-            base.Send("groups.leave", "group_id=" + group_id, this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Покинуто ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("groups.leave", "group_id=" + groupId, _v);
+            WriteLog(string.Concat("Покинуто ", i, " из ", count));
         }
 
-        private void wallDelete(int owner_id, int post_id, int i = 0, int count = 0)
+        private void WallDelete(int ownerId, int postId, int i = 0, int count = 0)
         {
             Thread.Sleep(500);
-            base.Send("wall.delete", string.Concat(new object[]
-            {
-                    "owner_id=",
-                    owner_id,
-                    "&post_id=",
-                    post_id
-            }), this.v);
-            this.writeLog(string.Concat(new object[]
-            {
-                    "Удалено записей ",
-                    i,
-                    " из ",
-                    count
-            }));
+            Send("wall.delete", string.Concat("owner_id=", ownerId, "&post_id=", postId), _v);
+            WriteLog(string.Concat("Удалено записей ", i, " из ", count));
         }
 
-        private void writeLog(string text)
+        private void WriteLog(string text)
         {
-            this.form.setTextLabel(text);
+            _form.SetTextLabel(text);
         }
 
-        private void enabledButton(bool btnEnabled)
+        private void EnabledButton(bool btnEnabled)
         {
-            this.form.setButtonEnabled(btnEnabled);
+            _form.SetButtonEnabled(btnEnabled);
         }
     }
 }

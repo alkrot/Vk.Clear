@@ -11,125 +11,113 @@ namespace Vk.Clear
 	{
 		private delegate void LabelText(string text);
 
-		private delegate void buttonEnabled(bool btnEnabled);
+	    private delegate void BtnEnabled(bool btnEnabled);
 
 	
-		private Work work = new Work();
+		private readonly Work _work = new Work();
 
 
-		private Button btnGroupsLeave;
+		private Button _btnGroupsLeave;
 
-		private Label label1;
+		private Label _label1;
 
-		private Button btnDeleteFriends;
+		private Button _btnDeleteFriends;
 
-		private Button btnDeleteWall;
+		private Button _btnDeleteWall;
 
-		private Button btnDeletePhotos;
+		private Button _btnDeletePhotos;
 
-		private Button btnDeleteVideo;
+		private Button _btnDeleteVideo;
 
-		private Button btnDeleteAudio;
+		private Button _btnDeleteAudio;
 
-		private Button btnDeleteDialogs;
+		private Button _btnDeleteDialogs;
 
-		private Button btnDeleteNewsfeed;
+		private Button _btnDeleteNewsfeed;
 
-		private Button btnGroupsUnban;
+		private Button _btnGroupsUnban;
 
-		private Button btnAccountBanned;
+		private Button _btnAccountBanned;
 
-		private TabControl tabControl1;
+		private TabControl _tabControl1;
 
-		private TabPage tabPage1;
+		private TabPage _tabPage1;
 
-		private TabPage tabPage2;
+		private TabPage _tabPage2;
 
-		private TabPage tabPage3;
+		private TabPage _tabPage3;
 
-		private Button btnDeleteTopic;
+		private Button _btnDeleteTopic;
 
-		private Button btnDeleteNotes;
+		private Button _btnDeleteNotes;
 
-		private Button btnDeleteDocs;
+		private Button _btnDeleteDocs;
 
-		private Button btnDeleteFollowers;
+		private Button _btnDeleteFollowers;
 
-		private Button btnDeleteMembers;
+		private Button _btnDeleteMembers;
 
-		private Button btnDeletedDieUsers;
+		private Button _btnDeletedDieUsers;
 
-		public bool ButtonEnabled
-		{
-			get
-			{
-				return tabControl1.Enabled;
-			}
-		}
+		public bool ButtonEnabled => _tabControl1.Enabled;
 
-		public Form1()
+	    public Form1()
 		{
             InitializeComponent();
 		}
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
-            work.Start(5274836, "groups,friends,wall,photos,video,audio,messages,notes,docs,offline");
-            work.addForms(this);
-			if (work.ID == 0)
+            _work.Start(5274836, "groups,friends,wall,photos,video,audio,messages,notes,docs,offline");
+            _work.AddForms(this);
+			if (_work.ID == 0)
 			{
 				MessageBox.Show("Подключите инет или дайте доступ приложению");
                 Close();
 			}
-            work.statsTrackVisitor();
-            label1.Text = "Твой id: " + work.ID;
+            _work.StatsTrackVisitor();
+            _label1.Text = "Твой id: " + _work.ID;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(new ThreadStart(work.groups));
+			Thread thread = new Thread(_work.Groups);
 			thread.Start();
 		}
 
-		public void setButtonEnabled(bool btnEnabled)
+		public void SetButtonEnabled(bool btnEnabled)
 		{
 			if (InvokeRequired)
 			{
-                BeginInvoke(new buttonEnabled(this.setButtonEnabled), new object[]
-				{
-					btnEnabled
-				});
+                BeginInvoke(new BtnEnabled(SetButtonEnabled), btnEnabled);
 				return;
 			}
-            tabControl1.Enabled = btnEnabled;
+            _tabControl1.Enabled = btnEnabled;
 		}
 
-		public void setTextLabel(string text)
+		public void SetTextLabel(string text)
 		{
 			if (InvokeRequired)
 			{
-                BeginInvoke(new LabelText(this.setTextLabel), new object[]
-				{
-					text
-				});
+                BeginInvoke(new LabelText(SetTextLabel), text);
 				return;
 			}
-            label1.Text = text;
+            _label1.Text = text;
 		}
 
 		private void btnDeleteFriends_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(new ThreadStart(work.friends));
+			Thread thread = new Thread(_work.Friends);
 			thread.Start();
 		}
 
 		private void btnDeleteWall_Click(object sender, EventArgs e)
 		{
-			string text = work.ID.ToString();
+			string text = _work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
-				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(new ParameterizedThreadStart(work.wall));
+				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(_work.Wall);
 				thread.Start(text);
 			}
 		}
@@ -205,65 +193,65 @@ namespace Vk.Clear
 
 		private void btnDeletePhotos_Click(object sender, EventArgs e)
 		{
-			string text = work.ID.ToString();
+			string text = _work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
 				if (DialogResult.OK == ShowBox("Внимание", "Удалить альбомы с фотографиями?"))
 				{
-					text = ((text != work.ID.ToString()) ? ("-" + text) : text);
-					Thread thread = new Thread(new ParameterizedThreadStart(work.photosAlbum));
+					text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
+					Thread thread = new Thread(_work.PhotosAlbum);
 					thread.Start(text);
 					return;
 				}
-				if (text.Length >= 0 && text == this.work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить и сохраненые фотографии?"))
+				if (text.Length >= 0 && text == _work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить и сохраненые фотографии?"))
 				{
-                    work.DelSavePhoto = true;
+                    _work.DelSavePhoto = true;
 				}
-				text = ((text != this.work.ID.ToString()) ? ("-" + text) : text);
-				if (text != this.work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить фотографии со стены сообщества?"))
+				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
+				if (text != _work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить фотографии со стены сообщества?"))
 				{
-                    work.DelWallPhotoGroup = true;
+                    _work.DelWallPhotoGroup = true;
 				}
-				Thread thread2 = new Thread(new ParameterizedThreadStart(work.photos));
+				Thread thread2 = new Thread(_work.Photos);
 				thread2.Start(text);
 			}
 		}
 
 		private void btnDeleteVideo_Click(object sender, EventArgs e)
 		{
-			string text = work.ID.ToString();
+			string text = _work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
 				if (DialogResult.OK == ShowBox("Внимание", "Удалить и альбомы?"))
 				{
-                    work.DelAlbumVideo = true;
+                    _work.DelAlbumVideo = true;
 				}
-				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(new ParameterizedThreadStart(work.video));
+				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(_work.Video);
 				thread.Start(text);
 			}
 		}
 
 		private void btnDeleteAudio_Click(object sender, EventArgs e)
 		{
-			string text = work.ID.ToString();
+			string text = _work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
-				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(new ParameterizedThreadStart(work.audio));
+				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(_work.Audio);
 				thread.Start(text);
 			}
 		}
 
 		private void btnDeleteDialogs_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(new ThreadStart(work.messages));
+			Thread thread = new Thread(_work.Messages);
 			thread.Start();
 		}
 
 		private void btnDeleteNewsfeed_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(new ThreadStart(work.newsfeedLists));
+			Thread thread = new Thread(_work.NewsfeedLists);
 			thread.Start();
 		}
 
@@ -272,14 +260,14 @@ namespace Vk.Clear
 			string text = "";
 			if (DialogResult.OK == InputBox("Введите id группы", "id", ref text) && text.Length > 0)
 			{
-				Thread thread = new Thread(new ParameterizedThreadStart(work.groupsBanned));
+				Thread thread = new Thread(_work.GroupsBanned);
 				thread.Start(text);
 			}
 		}
 
 		private void btnAccountBanned_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(new ThreadStart(work.accountBanned));
+			Thread thread = new Thread(_work.AccountBanned);
 			thread.Start();
 		}
 
@@ -289,29 +277,29 @@ namespace Vk.Clear
 			if (DialogResult.OK == InputBox("Введите id группы", "id", ref text) && text.Length > 0)
 			{
 				int num = Math.Abs(int.Parse(text));
-				Thread thread = new Thread(new ParameterizedThreadStart(work.boardTopics));
+				Thread thread = new Thread(_work.BoardTopics);
 				thread.Start(num);
 			}
 		}
 
 		private void btnDeleteNotes_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(new ThreadStart(work.notes));
+			Thread thread = new Thread(_work.Notes);
 			thread.Start();
 		}
 
 		private void btnDeleteDocs_Click(object sender, EventArgs e)
 		{
-			string text = this.work.ID.ToString();
+			string text = _work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
-				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(new ParameterizedThreadStart(work.docs));
+				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(_work.Docs);
 				thread.Start(text);
 			}
 		}
 
-		private void outVk()
+		private void OutVk()
 		{
 			string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Cookies);
 			string[] files = Directory.GetFiles(folderPath);
@@ -332,15 +320,15 @@ namespace Vk.Clear
 
 		private void Form1_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (work.ID > 0 && DialogResult.OK == ShowBox("Внимание", "Выйти с аккаунта?"))
+			if (_work.ID > 0 && DialogResult.OK == ShowBox("Внимание", "Выйти с аккаунта?"))
 			{
-                outVk();
+                OutVk();
 			}
 		}
 
 		private void btnDeleteFollowers_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(new ThreadStart(work.followers));
+			Thread thread = new Thread(_work.Followers);
 			thread.Start();
 		}
 
@@ -350,7 +338,7 @@ namespace Vk.Clear
 			if (DialogResult.OK == InputBox("Введите id группы", "id", ref text) && text.Length > 0)
 			{
 				int num = Math.Abs(int.Parse(text));
-				Thread thread = new Thread(new ParameterizedThreadStart(work.groupsMembers));
+				Thread thread = new Thread(_work.GroupsMembers);
 				thread.Start(num);
 			}
 		}
@@ -362,12 +350,12 @@ namespace Vk.Clear
 			{
 				if (DialogResult.OK == ShowBox("Внимание", "Удалить и заблокированных?"))
 				{
-                    work.DelBanned = true;
+                    _work.DelBanned = true;
 				}
 				if (text.Length > 0)
 				{
 					int num = Math.Abs(int.Parse(text));
-					Thread thread = new Thread(new ParameterizedThreadStart(work.groupsMembersDeleted));
+					Thread thread = new Thread(_work.GroupsMembersDeleted);
 					thread.Start(num);
 				}
 			}
@@ -375,282 +363,282 @@ namespace Vk.Clear
 
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.btnGroupsLeave = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnDeleteFriends = new System.Windows.Forms.Button();
-            this.btnDeleteWall = new System.Windows.Forms.Button();
-            this.btnDeletePhotos = new System.Windows.Forms.Button();
-            this.btnDeleteVideo = new System.Windows.Forms.Button();
-            this.btnDeleteAudio = new System.Windows.Forms.Button();
-            this.btnDeleteDialogs = new System.Windows.Forms.Button();
-            this.btnDeleteNewsfeed = new System.Windows.Forms.Button();
-            this.btnGroupsUnban = new System.Windows.Forms.Button();
-            this.btnAccountBanned = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.btnDeleteDocs = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.btnDeleteFollowers = new System.Windows.Forms.Button();
-            this.btnDeleteNotes = new System.Windows.Forms.Button();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.btnDeletedDieUsers = new System.Windows.Forms.Button();
-            this.btnDeleteMembers = new System.Windows.Forms.Button();
-            this.btnDeleteTopic = new System.Windows.Forms.Button();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.SuspendLayout();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(Form1));
+            _btnGroupsLeave = new Button();
+            _label1 = new Label();
+            _btnDeleteFriends = new Button();
+            _btnDeleteWall = new Button();
+            _btnDeletePhotos = new Button();
+            _btnDeleteVideo = new Button();
+            _btnDeleteAudio = new Button();
+            _btnDeleteDialogs = new Button();
+            _btnDeleteNewsfeed = new Button();
+            _btnGroupsUnban = new Button();
+            _btnAccountBanned = new Button();
+            _tabControl1 = new TabControl();
+            _tabPage1 = new TabPage();
+            _btnDeleteDocs = new Button();
+            _tabPage2 = new TabPage();
+            _btnDeleteFollowers = new Button();
+            _btnDeleteNotes = new Button();
+            _tabPage3 = new TabPage();
+            _btnDeletedDieUsers = new Button();
+            _btnDeleteMembers = new Button();
+            _btnDeleteTopic = new Button();
+            _tabControl1.SuspendLayout();
+            _tabPage1.SuspendLayout();
+            _tabPage2.SuspendLayout();
+            _tabPage3.SuspendLayout();
+            SuspendLayout();
             // 
             // btnGroupsLeave
             // 
-            this.btnGroupsLeave.Location = new System.Drawing.Point(6, 122);
-            this.btnGroupsLeave.Name = "btnGroupsLeave";
-            this.btnGroupsLeave.Size = new System.Drawing.Size(157, 23);
-            this.btnGroupsLeave.TabIndex = 0;
-            this.btnGroupsLeave.Text = "Выйти из всех групп";
-            this.btnGroupsLeave.UseVisualStyleBackColor = true;
-            this.btnGroupsLeave.Click += new System.EventHandler(this.button1_Click);
+            _btnGroupsLeave.Location = new Point(6, 122);
+            _btnGroupsLeave.Name = "_btnGroupsLeave";
+            _btnGroupsLeave.Size = new Size(157, 23);
+            _btnGroupsLeave.TabIndex = 0;
+            _btnGroupsLeave.Text = "Выйти из всех групп";
+            _btnGroupsLeave.UseVisualStyleBackColor = true;
+            _btnGroupsLeave.Click += button1_Click;
             // 
             // label1
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.label1.Location = new System.Drawing.Point(0, 236);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(226, 33);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Информация\r\nИнформация";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            _label1.Dock = DockStyle.Bottom;
+            _label1.Location = new Point(0, 236);
+            _label1.Name = "_label1";
+            _label1.Size = new Size(226, 33);
+            _label1.TabIndex = 1;
+            _label1.Text = "Информация\r\nИнформация";
+            _label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnDeleteFriends
             // 
-            this.btnDeleteFriends.Location = new System.Drawing.Point(6, 64);
-            this.btnDeleteFriends.Name = "btnDeleteFriends";
-            this.btnDeleteFriends.Size = new System.Drawing.Size(157, 23);
-            this.btnDeleteFriends.TabIndex = 2;
-            this.btnDeleteFriends.Text = "Удалить всех друзей";
-            this.btnDeleteFriends.UseVisualStyleBackColor = true;
-            this.btnDeleteFriends.Click += new System.EventHandler(this.btnDeleteFriends_Click);
+            _btnDeleteFriends.Location = new Point(6, 64);
+            _btnDeleteFriends.Name = "_btnDeleteFriends";
+            _btnDeleteFriends.Size = new Size(157, 23);
+            _btnDeleteFriends.TabIndex = 2;
+            _btnDeleteFriends.Text = "Удалить всех друзей";
+            _btnDeleteFriends.UseVisualStyleBackColor = true;
+            _btnDeleteFriends.Click += btnDeleteFriends_Click;
             // 
             // btnDeleteWall
             // 
-            this.btnDeleteWall.Location = new System.Drawing.Point(6, 92);
-            this.btnDeleteWall.Name = "btnDeleteWall";
-            this.btnDeleteWall.Size = new System.Drawing.Size(158, 23);
-            this.btnDeleteWall.TabIndex = 3;
-            this.btnDeleteWall.Text = "Очистить стену";
-            this.btnDeleteWall.UseVisualStyleBackColor = true;
-            this.btnDeleteWall.Click += new System.EventHandler(this.btnDeleteWall_Click);
+            _btnDeleteWall.Location = new Point(6, 92);
+            _btnDeleteWall.Name = "_btnDeleteWall";
+            _btnDeleteWall.Size = new Size(158, 23);
+            _btnDeleteWall.TabIndex = 3;
+            _btnDeleteWall.Text = "Очистить стену";
+            _btnDeleteWall.UseVisualStyleBackColor = true;
+            _btnDeleteWall.Click += btnDeleteWall_Click;
             // 
             // btnDeletePhotos
             // 
-            this.btnDeletePhotos.Location = new System.Drawing.Point(6, 34);
-            this.btnDeletePhotos.Name = "btnDeletePhotos";
-            this.btnDeletePhotos.Size = new System.Drawing.Size(158, 23);
-            this.btnDeletePhotos.TabIndex = 4;
-            this.btnDeletePhotos.Text = "Удалить все фотографии";
-            this.btnDeletePhotos.UseVisualStyleBackColor = true;
-            this.btnDeletePhotos.Click += new System.EventHandler(this.btnDeletePhotos_Click);
+            _btnDeletePhotos.Location = new Point(6, 34);
+            _btnDeletePhotos.Name = "_btnDeletePhotos";
+            _btnDeletePhotos.Size = new Size(158, 23);
+            _btnDeletePhotos.TabIndex = 4;
+            _btnDeletePhotos.Text = "Удалить все фотографии";
+            _btnDeletePhotos.UseVisualStyleBackColor = true;
+            _btnDeletePhotos.Click += btnDeletePhotos_Click;
             // 
             // btnDeleteVideo
             // 
-            this.btnDeleteVideo.Location = new System.Drawing.Point(6, 6);
-            this.btnDeleteVideo.Name = "btnDeleteVideo";
-            this.btnDeleteVideo.Size = new System.Drawing.Size(158, 22);
-            this.btnDeleteVideo.TabIndex = 5;
-            this.btnDeleteVideo.Text = "Удалить все видео";
-            this.btnDeleteVideo.UseVisualStyleBackColor = true;
-            this.btnDeleteVideo.Click += new System.EventHandler(this.btnDeleteVideo_Click);
+            _btnDeleteVideo.Location = new Point(6, 6);
+            _btnDeleteVideo.Name = "_btnDeleteVideo";
+            _btnDeleteVideo.Size = new Size(158, 22);
+            _btnDeleteVideo.TabIndex = 5;
+            _btnDeleteVideo.Text = "Удалить все видео";
+            _btnDeleteVideo.UseVisualStyleBackColor = true;
+            _btnDeleteVideo.Click += btnDeleteVideo_Click;
             // 
             // btnDeleteAudio
             // 
-            this.btnDeleteAudio.Enabled = false;
-            this.btnDeleteAudio.Location = new System.Drawing.Point(6, 63);
-            this.btnDeleteAudio.Name = "btnDeleteAudio";
-            this.btnDeleteAudio.Size = new System.Drawing.Size(158, 23);
-            this.btnDeleteAudio.TabIndex = 6;
-            this.btnDeleteAudio.Text = "Удалить все аудиозаписи";
-            this.btnDeleteAudio.UseVisualStyleBackColor = true;
-            this.btnDeleteAudio.Click += new System.EventHandler(this.btnDeleteAudio_Click);
+            _btnDeleteAudio.Enabled = false;
+            _btnDeleteAudio.Location = new Point(6, 63);
+            _btnDeleteAudio.Name = "_btnDeleteAudio";
+            _btnDeleteAudio.Size = new Size(158, 23);
+            _btnDeleteAudio.TabIndex = 6;
+            _btnDeleteAudio.Text = "Удалить все аудиозаписи";
+            _btnDeleteAudio.UseVisualStyleBackColor = true;
+            _btnDeleteAudio.Click += btnDeleteAudio_Click;
             // 
             // btnDeleteDialogs
             // 
-            this.btnDeleteDialogs.Location = new System.Drawing.Point(6, 6);
-            this.btnDeleteDialogs.Name = "btnDeleteDialogs";
-            this.btnDeleteDialogs.Size = new System.Drawing.Size(157, 23);
-            this.btnDeleteDialogs.TabIndex = 7;
-            this.btnDeleteDialogs.Text = "Удалить все сообщения";
-            this.btnDeleteDialogs.UseVisualStyleBackColor = true;
-            this.btnDeleteDialogs.Click += new System.EventHandler(this.btnDeleteDialogs_Click);
+            _btnDeleteDialogs.Location = new Point(6, 6);
+            _btnDeleteDialogs.Name = "_btnDeleteDialogs";
+            _btnDeleteDialogs.Size = new Size(157, 23);
+            _btnDeleteDialogs.TabIndex = 7;
+            _btnDeleteDialogs.Text = "Удалить все сообщения";
+            _btnDeleteDialogs.UseVisualStyleBackColor = true;
+            _btnDeleteDialogs.Click += btnDeleteDialogs_Click;
             // 
             // btnDeleteNewsfeed
             // 
-            this.btnDeleteNewsfeed.Location = new System.Drawing.Point(6, 35);
-            this.btnDeleteNewsfeed.Name = "btnDeleteNewsfeed";
-            this.btnDeleteNewsfeed.Size = new System.Drawing.Size(157, 23);
-            this.btnDeleteNewsfeed.TabIndex = 8;
-            this.btnDeleteNewsfeed.Text = "Удалить список новостей";
-            this.btnDeleteNewsfeed.UseVisualStyleBackColor = true;
-            this.btnDeleteNewsfeed.Click += new System.EventHandler(this.btnDeleteNewsfeed_Click);
+            _btnDeleteNewsfeed.Location = new Point(6, 35);
+            _btnDeleteNewsfeed.Name = "_btnDeleteNewsfeed";
+            _btnDeleteNewsfeed.Size = new Size(157, 23);
+            _btnDeleteNewsfeed.TabIndex = 8;
+            _btnDeleteNewsfeed.Text = "Удалить список новостей";
+            _btnDeleteNewsfeed.UseVisualStyleBackColor = true;
+            _btnDeleteNewsfeed.Click += btnDeleteNewsfeed_Click;
             // 
             // btnGroupsUnban
             // 
-            this.btnGroupsUnban.Location = new System.Drawing.Point(6, 6);
-            this.btnGroupsUnban.Name = "btnGroupsUnban";
-            this.btnGroupsUnban.Size = new System.Drawing.Size(157, 23);
-            this.btnGroupsUnban.TabIndex = 9;
-            this.btnGroupsUnban.Text = "Разбанить всех в группе";
-            this.btnGroupsUnban.UseVisualStyleBackColor = true;
-            this.btnGroupsUnban.Click += new System.EventHandler(this.btnGroupsUnban_Click);
+            _btnGroupsUnban.Location = new Point(6, 6);
+            _btnGroupsUnban.Name = "_btnGroupsUnban";
+            _btnGroupsUnban.Size = new Size(157, 23);
+            _btnGroupsUnban.TabIndex = 9;
+            _btnGroupsUnban.Text = "Разбанить всех в группе";
+            _btnGroupsUnban.UseVisualStyleBackColor = true;
+            _btnGroupsUnban.Click += btnGroupsUnban_Click;
             // 
             // btnAccountBanned
             // 
-            this.btnAccountBanned.Location = new System.Drawing.Point(6, 93);
-            this.btnAccountBanned.Name = "btnAccountBanned";
-            this.btnAccountBanned.Size = new System.Drawing.Size(157, 23);
-            this.btnAccountBanned.TabIndex = 10;
-            this.btnAccountBanned.Text = "Очистить черный список";
-            this.btnAccountBanned.UseVisualStyleBackColor = true;
-            this.btnAccountBanned.Click += new System.EventHandler(this.btnAccountBanned_Click);
+            _btnAccountBanned.Location = new Point(6, 93);
+            _btnAccountBanned.Name = "_btnAccountBanned";
+            _btnAccountBanned.Size = new Size(157, 23);
+            _btnAccountBanned.TabIndex = 10;
+            _btnAccountBanned.Text = "Очистить черный список";
+            _btnAccountBanned.UseVisualStyleBackColor = true;
+            _btnAccountBanned.Click += btnAccountBanned_Click;
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(226, 236);
-            this.tabControl1.TabIndex = 11;
+            _tabControl1.Controls.Add(_tabPage1);
+            _tabControl1.Controls.Add(_tabPage2);
+            _tabControl1.Controls.Add(_tabPage3);
+            _tabControl1.Dock = DockStyle.Fill;
+            _tabControl1.Location = new Point(0, 0);
+            _tabControl1.Name = "_tabControl1";
+            _tabControl1.SelectedIndex = 0;
+            _tabControl1.Size = new Size(226, 236);
+            _tabControl1.TabIndex = 11;
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.btnDeleteDocs);
-            this.tabPage1.Controls.Add(this.btnDeletePhotos);
-            this.tabPage1.Controls.Add(this.btnDeleteVideo);
-            this.tabPage1.Controls.Add(this.btnDeleteAudio);
-            this.tabPage1.Controls.Add(this.btnDeleteWall);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(218, 210);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Общие";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            _tabPage1.Controls.Add(_btnDeleteDocs);
+            _tabPage1.Controls.Add(_btnDeletePhotos);
+            _tabPage1.Controls.Add(_btnDeleteVideo);
+            _tabPage1.Controls.Add(_btnDeleteAudio);
+            _tabPage1.Controls.Add(_btnDeleteWall);
+            _tabPage1.Location = new Point(4, 22);
+            _tabPage1.Name = "_tabPage1";
+            _tabPage1.Padding = new Padding(3);
+            _tabPage1.Size = new Size(218, 210);
+            _tabPage1.TabIndex = 0;
+            _tabPage1.Text = "Общие";
+            _tabPage1.UseVisualStyleBackColor = true;
             // 
             // btnDeleteDocs
             // 
-            this.btnDeleteDocs.Location = new System.Drawing.Point(6, 121);
-            this.btnDeleteDocs.Name = "btnDeleteDocs";
-            this.btnDeleteDocs.Size = new System.Drawing.Size(158, 23);
-            this.btnDeleteDocs.TabIndex = 7;
-            this.btnDeleteDocs.Text = "Удалить все документы";
-            this.btnDeleteDocs.UseVisualStyleBackColor = true;
-            this.btnDeleteDocs.Click += new System.EventHandler(this.btnDeleteDocs_Click);
+            _btnDeleteDocs.Location = new Point(6, 121);
+            _btnDeleteDocs.Name = "_btnDeleteDocs";
+            _btnDeleteDocs.Size = new Size(158, 23);
+            _btnDeleteDocs.TabIndex = 7;
+            _btnDeleteDocs.Text = "Удалить все документы";
+            _btnDeleteDocs.UseVisualStyleBackColor = true;
+            _btnDeleteDocs.Click += btnDeleteDocs_Click;
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.btnDeleteFollowers);
-            this.tabPage2.Controls.Add(this.btnDeleteNotes);
-            this.tabPage2.Controls.Add(this.btnDeleteDialogs);
-            this.tabPage2.Controls.Add(this.btnGroupsLeave);
-            this.tabPage2.Controls.Add(this.btnAccountBanned);
-            this.tabPage2.Controls.Add(this.btnDeleteNewsfeed);
-            this.tabPage2.Controls.Add(this.btnDeleteFriends);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(218, 210);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Пользователь";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            _tabPage2.Controls.Add(_btnDeleteFollowers);
+            _tabPage2.Controls.Add(_btnDeleteNotes);
+            _tabPage2.Controls.Add(_btnDeleteDialogs);
+            _tabPage2.Controls.Add(_btnGroupsLeave);
+            _tabPage2.Controls.Add(_btnAccountBanned);
+            _tabPage2.Controls.Add(_btnDeleteNewsfeed);
+            _tabPage2.Controls.Add(_btnDeleteFriends);
+            _tabPage2.Location = new Point(4, 22);
+            _tabPage2.Name = "_tabPage2";
+            _tabPage2.Padding = new Padding(3);
+            _tabPage2.Size = new Size(218, 210);
+            _tabPage2.TabIndex = 1;
+            _tabPage2.Text = "Пользователь";
+            _tabPage2.UseVisualStyleBackColor = true;
             // 
             // btnDeleteFollowers
             // 
-            this.btnDeleteFollowers.Location = new System.Drawing.Point(8, 178);
-            this.btnDeleteFollowers.Name = "btnDeleteFollowers";
-            this.btnDeleteFollowers.Size = new System.Drawing.Size(155, 23);
-            this.btnDeleteFollowers.TabIndex = 12;
-            this.btnDeleteFollowers.Text = "Удалить подписчиков";
-            this.btnDeleteFollowers.UseVisualStyleBackColor = true;
-            this.btnDeleteFollowers.Click += new System.EventHandler(this.btnDeleteFollowers_Click);
+            _btnDeleteFollowers.Location = new Point(8, 178);
+            _btnDeleteFollowers.Name = "_btnDeleteFollowers";
+            _btnDeleteFollowers.Size = new Size(155, 23);
+            _btnDeleteFollowers.TabIndex = 12;
+            _btnDeleteFollowers.Text = "Удалить подписчиков";
+            _btnDeleteFollowers.UseVisualStyleBackColor = true;
+            _btnDeleteFollowers.Click += btnDeleteFollowers_Click;
             // 
             // btnDeleteNotes
             // 
-            this.btnDeleteNotes.Location = new System.Drawing.Point(6, 151);
-            this.btnDeleteNotes.Name = "btnDeleteNotes";
-            this.btnDeleteNotes.Size = new System.Drawing.Size(157, 23);
-            this.btnDeleteNotes.TabIndex = 11;
-            this.btnDeleteNotes.Text = "Удалить все заметки";
-            this.btnDeleteNotes.UseVisualStyleBackColor = true;
-            this.btnDeleteNotes.Click += new System.EventHandler(this.btnDeleteNotes_Click);
+            _btnDeleteNotes.Location = new Point(6, 151);
+            _btnDeleteNotes.Name = "_btnDeleteNotes";
+            _btnDeleteNotes.Size = new Size(157, 23);
+            _btnDeleteNotes.TabIndex = 11;
+            _btnDeleteNotes.Text = "Удалить все заметки";
+            _btnDeleteNotes.UseVisualStyleBackColor = true;
+            _btnDeleteNotes.Click += btnDeleteNotes_Click;
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.btnDeletedDieUsers);
-            this.tabPage3.Controls.Add(this.btnDeleteMembers);
-            this.tabPage3.Controls.Add(this.btnDeleteTopic);
-            this.tabPage3.Controls.Add(this.btnGroupsUnban);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(218, 210);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Группа";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            _tabPage3.Controls.Add(_btnDeletedDieUsers);
+            _tabPage3.Controls.Add(_btnDeleteMembers);
+            _tabPage3.Controls.Add(_btnDeleteTopic);
+            _tabPage3.Controls.Add(_btnGroupsUnban);
+            _tabPage3.Location = new Point(4, 22);
+            _tabPage3.Name = "_tabPage3";
+            _tabPage3.Padding = new Padding(3);
+            _tabPage3.Size = new Size(218, 210);
+            _tabPage3.TabIndex = 2;
+            _tabPage3.Text = "Группа";
+            _tabPage3.UseVisualStyleBackColor = true;
             // 
             // btnDeletedDieUsers
             // 
-            this.btnDeletedDieUsers.Location = new System.Drawing.Point(8, 93);
-            this.btnDeletedDieUsers.Name = "btnDeletedDieUsers";
-            this.btnDeletedDieUsers.Size = new System.Drawing.Size(155, 23);
-            this.btnDeletedDieUsers.TabIndex = 12;
-            this.btnDeletedDieUsers.Text = "Удалить мертвых";
-            this.btnDeletedDieUsers.UseVisualStyleBackColor = true;
-            this.btnDeletedDieUsers.Click += new System.EventHandler(this.btnDeletedDieUsers_Click);
+            _btnDeletedDieUsers.Location = new Point(8, 93);
+            _btnDeletedDieUsers.Name = "_btnDeletedDieUsers";
+            _btnDeletedDieUsers.Size = new Size(155, 23);
+            _btnDeletedDieUsers.TabIndex = 12;
+            _btnDeletedDieUsers.Text = "Удалить мертвых";
+            _btnDeletedDieUsers.UseVisualStyleBackColor = true;
+            _btnDeletedDieUsers.Click += btnDeletedDieUsers_Click;
             // 
             // btnDeleteMembers
             // 
-            this.btnDeleteMembers.Location = new System.Drawing.Point(8, 64);
-            this.btnDeleteMembers.Name = "btnDeleteMembers";
-            this.btnDeleteMembers.Size = new System.Drawing.Size(155, 23);
-            this.btnDeleteMembers.TabIndex = 11;
-            this.btnDeleteMembers.Text = "Удалить участников";
-            this.btnDeleteMembers.UseVisualStyleBackColor = true;
-            this.btnDeleteMembers.Click += new System.EventHandler(this.btnDeleteMembers_Click);
+            _btnDeleteMembers.Location = new Point(8, 64);
+            _btnDeleteMembers.Name = "_btnDeleteMembers";
+            _btnDeleteMembers.Size = new Size(155, 23);
+            _btnDeleteMembers.TabIndex = 11;
+            _btnDeleteMembers.Text = "Удалить участников";
+            _btnDeleteMembers.UseVisualStyleBackColor = true;
+            _btnDeleteMembers.Click += btnDeleteMembers_Click;
             // 
             // btnDeleteTopic
             // 
-            this.btnDeleteTopic.Location = new System.Drawing.Point(6, 35);
-            this.btnDeleteTopic.Name = "btnDeleteTopic";
-            this.btnDeleteTopic.Size = new System.Drawing.Size(157, 23);
-            this.btnDeleteTopic.TabIndex = 10;
-            this.btnDeleteTopic.Text = "Удалить все обсуждения";
-            this.btnDeleteTopic.UseVisualStyleBackColor = true;
-            this.btnDeleteTopic.Click += new System.EventHandler(this.btnDeleteTopic_Click);
+            _btnDeleteTopic.Location = new Point(6, 35);
+            _btnDeleteTopic.Name = "_btnDeleteTopic";
+            _btnDeleteTopic.Size = new Size(157, 23);
+            _btnDeleteTopic.TabIndex = 10;
+            _btnDeleteTopic.Text = "Удалить все обсуждения";
+            _btnDeleteTopic.UseVisualStyleBackColor = true;
+            _btnDeleteTopic.Click += btnDeleteTopic_Click;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(226, 269);
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.Name = "Form1";
-            this.Text = "Vk.Clear";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(226, 269);
+            Controls.Add(_tabControl1);
+            Controls.Add(_label1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = ((Icon)(resources.GetObject("$this.Icon")));
+            MaximizeBox = false;
+            Name = "Form1";
+            Text = "Vk.Clear";
+            FormClosed += Form1_FormClosed;
+            Load += Form1_Load;
+            _tabControl1.ResumeLayout(false);
+            _tabPage1.ResumeLayout(false);
+            _tabPage2.ResumeLayout(false);
+            _tabPage3.ResumeLayout(false);
+            ResumeLayout(false);
 
 		}
 	}
