@@ -81,6 +81,9 @@
     <Compile Include="Vk.Clear\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Vk.Clear\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Vk.Clear\Program.cs" />
     <Compile Include="Vk.Clear\Work.cs" />
   </ItemGroup>
