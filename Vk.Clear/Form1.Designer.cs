@@ -35,17 +35,17 @@ namespace Vk.Clear
             this._tabPage1 = new System.Windows.Forms.TabPage();
             this.btnDeleteDocs = new System.Windows.Forms.Button();
             this._tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnRemoveLink = new System.Windows.Forms.Button();
+            this.btnRemoveFaveUsers = new System.Windows.Forms.Button();
+            this.btnDeleteLikePost = new System.Windows.Forms.Button();
+            this.btnDeleteLikeVideo = new System.Windows.Forms.Button();
+            this.btnDeleteLikePhoto = new System.Windows.Forms.Button();
             this.btnDeleteFollowers = new System.Windows.Forms.Button();
             this.btnDeleteNotes = new System.Windows.Forms.Button();
             this._tabPage3 = new System.Windows.Forms.TabPage();
             this.btnDeletedDieUsers = new System.Windows.Forms.Button();
             this.btnDeleteMembers = new System.Windows.Forms.Button();
             this.btnDeleteTopic = new System.Windows.Forms.Button();
-            this.btnDeleteLikePhoto = new System.Windows.Forms.Button();
-            this.btnDeleteLikeVideo = new System.Windows.Forms.Button();
-            this.btnDeleteLikePost = new System.Windows.Forms.Button();
-            this.btnRemoveFaveUsers = new System.Windows.Forms.Button();
-            this.btnRemoveLink = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this._tabPage1.SuspendLayout();
             this._tabPage2.SuspendLayout();
@@ -223,6 +223,56 @@ namespace Vk.Clear
             this._tabPage2.Text = "Пользователь";
             this._tabPage2.UseVisualStyleBackColor = true;
             // 
+            // btnRemoveLink
+            // 
+            this.btnRemoveLink.Location = new System.Drawing.Point(8, 323);
+            this.btnRemoveLink.Name = "btnRemoveLink";
+            this.btnRemoveLink.Size = new System.Drawing.Size(204, 23);
+            this.btnRemoveLink.TabIndex = 17;
+            this.btnRemoveLink.Text = "Удалить ссылки из закладок";
+            this.btnRemoveLink.UseVisualStyleBackColor = true;
+            this.btnRemoveLink.Click += new System.EventHandler(this.btnRemoveLink_Click);
+            // 
+            // btnRemoveFaveUsers
+            // 
+            this.btnRemoveFaveUsers.Location = new System.Drawing.Point(6, 294);
+            this.btnRemoveFaveUsers.Name = "btnRemoveFaveUsers";
+            this.btnRemoveFaveUsers.Size = new System.Drawing.Size(204, 23);
+            this.btnRemoveFaveUsers.TabIndex = 16;
+            this.btnRemoveFaveUsers.Text = "Удалить людей из закладок";
+            this.btnRemoveFaveUsers.UseVisualStyleBackColor = true;
+            this.btnRemoveFaveUsers.Click += new System.EventHandler(this.btnRemoveFaveUsers_Click);
+            // 
+            // btnDeleteLikePost
+            // 
+            this.btnDeleteLikePost.Location = new System.Drawing.Point(8, 265);
+            this.btnDeleteLikePost.Name = "btnDeleteLikePost";
+            this.btnDeleteLikePost.Size = new System.Drawing.Size(204, 23);
+            this.btnDeleteLikePost.TabIndex = 15;
+            this.btnDeleteLikePost.Text = "Удалить лайки с постов";
+            this.btnDeleteLikePost.UseVisualStyleBackColor = true;
+            this.btnDeleteLikePost.Click += new System.EventHandler(this.btnDeleteLikePost_Click);
+            // 
+            // btnDeleteLikeVideo
+            // 
+            this.btnDeleteLikeVideo.Location = new System.Drawing.Point(6, 236);
+            this.btnDeleteLikeVideo.Name = "btnDeleteLikeVideo";
+            this.btnDeleteLikeVideo.Size = new System.Drawing.Size(204, 23);
+            this.btnDeleteLikeVideo.TabIndex = 14;
+            this.btnDeleteLikeVideo.Text = "Удалить лайки с видео";
+            this.btnDeleteLikeVideo.UseVisualStyleBackColor = true;
+            this.btnDeleteLikeVideo.Click += new System.EventHandler(this.btnDeleteLikeVideo_Click);
+            // 
+            // btnDeleteLikePhoto
+            // 
+            this.btnDeleteLikePhoto.Location = new System.Drawing.Point(8, 207);
+            this.btnDeleteLikePhoto.Name = "btnDeleteLikePhoto";
+            this.btnDeleteLikePhoto.Size = new System.Drawing.Size(202, 23);
+            this.btnDeleteLikePhoto.TabIndex = 13;
+            this.btnDeleteLikePhoto.Text = "Удалить лайки с фотографий";
+            this.btnDeleteLikePhoto.UseVisualStyleBackColor = true;
+            this.btnDeleteLikePhoto.Click += new System.EventHandler(this.btnDeleteLikePhoto_Click);
+            // 
             // btnDeleteFollowers
             // 
             this.btnDeleteFollowers.Location = new System.Drawing.Point(8, 178);
@@ -287,56 +337,6 @@ namespace Vk.Clear
             this.btnDeleteTopic.UseVisualStyleBackColor = true;
             this.btnDeleteTopic.Click += new System.EventHandler(this.btnDeleteTopic_Click);
             // 
-            // btnDeleteLikePhoto
-            // 
-            this.btnDeleteLikePhoto.Location = new System.Drawing.Point(8, 207);
-            this.btnDeleteLikePhoto.Name = "btnDeleteLikePhoto";
-            this.btnDeleteLikePhoto.Size = new System.Drawing.Size(202, 23);
-            this.btnDeleteLikePhoto.TabIndex = 13;
-            this.btnDeleteLikePhoto.Text = "Удалить лайки с фотографий";
-            this.btnDeleteLikePhoto.UseVisualStyleBackColor = true;
-            this.btnDeleteLikePhoto.Click += new System.EventHandler(this.btnDeleteLikePhoto_Click);
-            // 
-            // btnDeleteLikeVideo
-            // 
-            this.btnDeleteLikeVideo.Location = new System.Drawing.Point(6, 236);
-            this.btnDeleteLikeVideo.Name = "btnDeleteLikeVideo";
-            this.btnDeleteLikeVideo.Size = new System.Drawing.Size(204, 23);
-            this.btnDeleteLikeVideo.TabIndex = 14;
-            this.btnDeleteLikeVideo.Text = "Удалить лайки с видео";
-            this.btnDeleteLikeVideo.UseVisualStyleBackColor = true;
-            this.btnDeleteLikeVideo.Click += new System.EventHandler(this.btnDeleteLikeVideo_Click);
-            // 
-            // btnDeleteLikePost
-            // 
-            this.btnDeleteLikePost.Location = new System.Drawing.Point(8, 265);
-            this.btnDeleteLikePost.Name = "btnDeleteLikePost";
-            this.btnDeleteLikePost.Size = new System.Drawing.Size(204, 23);
-            this.btnDeleteLikePost.TabIndex = 15;
-            this.btnDeleteLikePost.Text = "Удалить лайки с постов";
-            this.btnDeleteLikePost.UseVisualStyleBackColor = true;
-            this.btnDeleteLikePost.Click += new System.EventHandler(this.btnDeleteLikePost_Click);
-            // 
-            // btnRemoveFaveUsers
-            // 
-            this.btnRemoveFaveUsers.Location = new System.Drawing.Point(6, 294);
-            this.btnRemoveFaveUsers.Name = "btnRemoveFaveUsers";
-            this.btnRemoveFaveUsers.Size = new System.Drawing.Size(204, 23);
-            this.btnRemoveFaveUsers.TabIndex = 16;
-            this.btnRemoveFaveUsers.Text = "Удалить людей из закладок";
-            this.btnRemoveFaveUsers.UseVisualStyleBackColor = true;
-            this.btnRemoveFaveUsers.Click += new System.EventHandler(this.btnRemoveFaveUsers_Click);
-            // 
-            // btnRemoveLink
-            // 
-            this.btnRemoveLink.Location = new System.Drawing.Point(8, 323);
-            this.btnRemoveLink.Name = "btnRemoveLink";
-            this.btnRemoveLink.Size = new System.Drawing.Size(204, 23);
-            this.btnRemoveLink.TabIndex = 17;
-            this.btnRemoveLink.Text = "Удалить ссылки из закладок";
-            this.btnRemoveLink.UseVisualStyleBackColor = true;
-            this.btnRemoveLink.Click += new System.EventHandler(this.btnRemoveLink_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -345,6 +345,7 @@ namespace Vk.Clear
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this._label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Vk.Clear";

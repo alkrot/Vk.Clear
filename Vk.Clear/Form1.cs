@@ -24,7 +24,7 @@ namespace Vk.Clear
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
-            work.Start("groups,friends,wall,photos,video,audio,messages,notes,docs,offline");
+            work.Start(5274836,"groups,friends,wall,photos,video,audio,messages,notes,docs,offline");
             work.AddForms(this);
 			if (work.ID == 0)
 			{
