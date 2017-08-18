@@ -13,9 +13,9 @@ namespace Vk.Clear
 	    private delegate void BtnEnabled(bool btnEnabled);
 
 	
-		private readonly Work _work = new Work();
+		private readonly Work work = new Work();
 
-		public bool ButtonEnabled => _tabControl1.Enabled;
+		public bool ButtonEnabled => tabControl1.Enabled;
 
 	    public Form1()
 		{
@@ -24,20 +24,20 @@ namespace Vk.Clear
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
-            _work.Start(5274836, "groups,friends,wall,photos,video,audio,messages,notes,docs,offline");
-            _work.AddForms(this);
-			if (_work.ID == 0)
+            work.Start("groups,friends,wall,photos,video,audio,messages,notes,docs,offline");
+            work.AddForms(this);
+			if (work.ID == 0)
 			{
 				MessageBox.Show(@"Подключите инет или дайте доступ приложению");
                 Close();
 			}
-            _work.StatsTrackVisitor();
-            _label1.Text = @"Твой id: " + _work.ID;
+            work.StatsTrackVisitor();
+            _label1.Text = @"Твой id: " + work.ID;
 		}
 
-		private void button1_Click(object sender, EventArgs e)
+		private void btnOutGroup_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(_work.Groups);
+			Thread thread = new Thread(work.Groups);
 			thread.Start();
 		}
 
@@ -48,7 +48,7 @@ namespace Vk.Clear
                 BeginInvoke(new BtnEnabled(SetButtonEnabled), btnEnabled);
 				return;
 			}
-            _tabControl1.Enabled = btnEnabled;
+            tabControl1.Enabled = btnEnabled;
 		}
 
 		public void SetTextLabel(string text)
@@ -63,17 +63,17 @@ namespace Vk.Clear
 
 		private void btnDeleteFriends_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(_work.Friends);
+			Thread thread = new Thread(work.Friends);
 			thread.Start();
 		}
 
 		private void btnDeleteWall_Click(object sender, EventArgs e)
 		{
-			string text = _work.ID.ToString();
+			string text = work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
-				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(_work.Wall);
+				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(work.Wall);
 				thread.Start(text);
 			}
 		}
@@ -149,65 +149,65 @@ namespace Vk.Clear
 
 		private void btnDeletePhotos_Click(object sender, EventArgs e)
 		{
-			string text = _work.ID.ToString();
+			string text = work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
 				if (DialogResult.OK == ShowBox("Внимание", "Удалить альбомы с фотографиями?"))
 				{
-					text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
-					Thread thread = new Thread(_work.PhotosAlbum);
+					text = ((text != work.ID.ToString()) ? ("-" + text) : text);
+					Thread thread = new Thread(work.PhotosAlbum);
 					thread.Start(text);
 					return;
 				}
-				if (text.Length >= 0 && text == _work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить и сохраненые фотографии?"))
+				if (text.Length >= 0 && text == work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить и сохраненые фотографии?"))
 				{
-                    _work.DelSavePhoto = true;
+                    work.DelSavePhoto = true;
 				}
-				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
-				if (text != _work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить фотографии со стены сообщества?"))
+				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
+				if (text != work.ID.ToString() && DialogResult.OK == ShowBox("Внимание", "Удалить фотографии со стены сообщества?"))
 				{
-                    _work.DelWallPhotoGroup = true;
+                    work.DelWallPhotoGroup = true;
 				}
-				Thread thread2 = new Thread(_work.Photos);
+				Thread thread2 = new Thread(work.Photos);
 				thread2.Start(text);
 			}
 		}
 
 		private void btnDeleteVideo_Click(object sender, EventArgs e)
 		{
-			string text = _work.ID.ToString();
+			string text = work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
 				if (DialogResult.OK == ShowBox("Внимание", "Удалить и альбомы?"))
 				{
-                    _work.DelAlbumVideo = true;
+                    work.DelAlbumVideo = true;
 				}
-				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(_work.Video);
+				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(work.Video);
 				thread.Start(text);
 			}
 		}
 
 		private void btnDeleteAudio_Click(object sender, EventArgs e)
 		{
-			string text = _work.ID.ToString();
+			string text = work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
-				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(_work.Audio);
+				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(work.Audio);
 				thread.Start(text);
 			}
 		}
 
 		private void btnDeleteDialogs_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(_work.Messages);
+			Thread thread = new Thread(work.Messages);
 			thread.Start();
 		}
 
 		private void btnDeleteNewsfeed_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(_work.NewsfeedLists);
+			Thread thread = new Thread(work.NewsfeedLists);
 			thread.Start();
 		}
 
@@ -216,14 +216,14 @@ namespace Vk.Clear
 			string text = "";
 			if (DialogResult.OK == InputBox("Введите id группы", "id", ref text) && text.Length > 0)
 			{
-				Thread thread = new Thread(_work.GroupsBanned);
+				Thread thread = new Thread(work.GroupsBanned);
 				thread.Start(text);
 			}
 		}
 
 		private void btnAccountBanned_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(_work.AccountBanned);
+			Thread thread = new Thread(work.AccountBanned);
 			thread.Start();
 		}
 
@@ -233,24 +233,24 @@ namespace Vk.Clear
 			if (DialogResult.OK == InputBox("Введите id группы", "id", ref text) && text.Length > 0)
 			{
 				int num = Math.Abs(int.Parse(text));
-				Thread thread = new Thread(_work.BoardTopics);
+				Thread thread = new Thread(work.BoardTopics);
 				thread.Start(num);
 			}
 		}
 
 		private void btnDeleteNotes_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(_work.Notes);
+			Thread thread = new Thread(work.Notes);
 			thread.Start();
 		}
 
 		private void btnDeleteDocs_Click(object sender, EventArgs e)
 		{
-			string text = _work.ID.ToString();
+			string text = work.ID.ToString();
 			if (DialogResult.OK == InputBox("Введите id группы или оставьте свой", "id", ref text))
 			{
-				text = ((text != _work.ID.ToString()) ? ("-" + text) : text);
-				Thread thread = new Thread(_work.Docs);
+				text = ((text != work.ID.ToString()) ? ("-" + text) : text);
+				Thread thread = new Thread(work.Docs);
 				thread.Start(text);
 			}
 		}
@@ -276,7 +276,7 @@ namespace Vk.Clear
 
 		private void Form1_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (_work.ID > 0 && DialogResult.OK == ShowBox("Внимание", "Выйти с аккаунта?"))
+			if (work.ID > 0 && DialogResult.OK == ShowBox("Внимание", "Выйти с аккаунта?"))
 			{
                 OutVk();
 			}
@@ -284,7 +284,7 @@ namespace Vk.Clear
 
 		private void btnDeleteFollowers_Click(object sender, EventArgs e)
 		{
-			Thread thread = new Thread(_work.Followers);
+			Thread thread = new Thread(work.Followers);
 			thread.Start();
 		}
 
@@ -294,7 +294,7 @@ namespace Vk.Clear
 			if (DialogResult.OK == InputBox("Введите id группы", "id", ref text) && text.Length > 0)
 			{
 				int num = Math.Abs(int.Parse(text));
-				Thread thread = new Thread(_work.GroupsMembers);
+				Thread thread = new Thread(work.GroupsMembers);
 				thread.Start(num);
 			}
 		}
@@ -306,15 +306,45 @@ namespace Vk.Clear
 			{
 				if (DialogResult.OK == ShowBox("Внимание", "Удалить и заблокированных?"))
 				{
-                    _work.DelBanned = true;
+                    work.DelBanned = true;
 				}
 				if (text.Length > 0)
 				{
 					int num = Math.Abs(int.Parse(text));
-					Thread thread = new Thread(_work.GroupsMembersDeleted);
+					Thread thread = new Thread(work.GroupsMembersDeleted);
 					thread.Start(num);
 				}
 			}
 		}
-	}
+
+        private void btnDeleteLikePhoto_Click(object sender, EventArgs e)
+        {
+            Thread th = new Thread(work.favePhotos);
+            th.Start();
+        }
+
+        private void btnDeleteLikeVideo_Click(object sender, EventArgs e)
+        {
+            Thread th = new Thread(work.faveVideo);
+            th.Start();
+        }
+
+        private void btnDeleteLikePost_Click(object sender, EventArgs e)
+        {
+            Thread th = new Thread(work.favePost);
+            th.Start();
+        }
+
+        private void btnRemoveFaveUsers_Click(object sender, EventArgs e)
+        {
+            Thread th = new Thread(work.faveUsers);
+            th.Start();
+        }
+
+        private void btnRemoveLink_Click(object sender, EventArgs e)
+        {
+            Thread th = new Thread(work.faveLink);
+            th.Start();
+        }
+    }
 }

@@ -4,7 +4,7 @@
   <description asmv2:iconFile="1453400081_free-27.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="Vk.Clear" version="1.0.0.28" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="Vk.Clear" version="1.0.0.29" language="neutral" processorArchitecture="msil" />
     <commandLine file="Vk.Clear.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -67,14 +67,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Vk.Clear.exe" size="777720">
-      <assemblyIdentity name="Vk.Clear" version="1.0.0.28" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Vk.Clear.exe" size="782840">
+      <assemblyIdentity name="Vk.Clear" version="1.0.0.29" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>CTAMrFRsEQht+RfPdvWipKK+rlHObDeDZKYPJiL7Ivs=</dsig:DigestValue>
+        <dsig:DigestValue>wQ4gtTkRPGigHO+xHBoCJxGqiajcxJkOLv4WokgysuM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

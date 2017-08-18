@@ -5,13 +5,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-[assembly: AssemblyVersion("1.0.0.28")]
+[assembly: AssemblyVersion("1.0.0.29")]
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: AssemblyCompany("Al_Krot")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCopyright("Copyright © al_krot 2017")]
 [assembly: AssemblyDescription("Автоматическая очистка VK")]
-[assembly: AssemblyFileVersion("1.0.0.28")]
+[assembly: AssemblyFileVersion("1.0.0.29")]
 [assembly: AssemblyProduct("Vk.Clear")]
 [assembly: AssemblyTitle("Vk.Clear")]
 [assembly: AssemblyTrademark("")]
