@@ -8,7 +8,7 @@ namespace Vk.Clear
 {
     public partial class Work : ApiVk
     {
-        
+
         public Work(string v = "5.68")
         {
             this.v = v;
@@ -30,7 +30,7 @@ namespace Vk.Clear
         public void FavePhotos()
         {
             EnabledButton(false);
-            JObject jObject = Send("fave.getPhotos","",v);
+            JObject jObject = Send("fave.getPhotos", "", v);
             int count = jObject["response"]["count"].Value<int>();
             jObject = Send("fave.getPhotos", "count=" + count, v);
             foreach (var photo in jObject["response"]["items"])
@@ -115,9 +115,9 @@ namespace Vk.Clear
             JObject jObject = Send("fave.getUsers", "");
             int count = jObject["response"]["count"].Value<int>();
             if (count > 50) jObject = Send("fave.getUsers", "count=" + count);
-            foreach(JToken users in jObject["response"]["items"])
+            foreach (JToken users in jObject["response"]["items"])
             {
-                if(RemoveFaveUser(users["id"].Value<int>()) > 0)
+                if (RemoveFaveUser(users["id"].Value<int>()) > 0)
                 {
                     WriteLog("Удаленно пользователей из зкаладок " + ++i + "/" + count);
                     Thread.Sleep(1000);
@@ -134,12 +134,12 @@ namespace Vk.Clear
         public void FaveLink()
         {
             EnabledButton(false);
-            JObject jObject = Send("fave.getLinks", "",v);
+            JObject jObject = Send("fave.getLinks", "", v);
             int count = jObject["response"]["count"].Value<int>();
-            if (count > 50) jObject = Send("fave.getLinks", "count=" + count,v);
+            if (count > 50) jObject = Send("fave.getLinks", "count=" + count, v);
             foreach (JToken link in jObject["response"]["items"])
             {
-                if(RemoveLink(link["id"].ToString()) > 0)
+                if (RemoveLink(link["id"].ToString()) > 0)
                 {
                     WriteLog("Удалено ссылок из закладок " + ++i + "/" + count);
                     Thread.Sleep(1000);
@@ -349,7 +349,7 @@ namespace Vk.Clear
             {
                 int userId = (jObject["response"]["items"][i]["message"]["user_id"] ?? -1).Value<int>();
                 int chatId = (jObject["response"]["items"][i]["message"]["chat_id"] ?? -1).Value<int>();
-                MessagesDelete(userId, chatId,++this.i, messagesCount);
+                MessagesDelete(userId, chatId, ++this.i, messagesCount);
             }
             if (count > 0)
                 Messages();
@@ -515,7 +515,7 @@ namespace Vk.Clear
             }
             int count = list.Count;
             for (int j = 0; j < count; j++)
-                GroupsRemoveUser((int) groupId, list[j], j, count);
+                GroupsRemoveUser((int)groupId, list[j], j, count);
             WriteLog("Мертвые аккаунты удаленны");
             EnabledButton(true);
         }

@@ -15,12 +15,15 @@ namespace Vk.Clear
 
         private readonly Work work = new Work();
 
+        /// <summary>
+        /// Enabled or disabled tab control
+        /// </summary>
         public bool ButtonEnabled => tabControl1.Enabled;
 
         Thread thread;
 
         /// <summary>
-        /// WShow input box
+        /// Show input box
         /// </summary>
         /// <param name="title">Title</param>
         /// <param name="promptText">Message</param>

@@ -31,3 +31,4 @@ E:\Хранить не перехранить\Хранить не перехра
 E:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\obj\Debug\Vk.Clear.csprojResolveAssemblyReference.cache
 E:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Vk.Clear.exe.config
 E:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Newtonsoft.Json.xml
+E:\Хранить не перехранить\Хранить не перехранить 2\VK.Clear\bin\Debug\Vk.Clear.xml
