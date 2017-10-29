@@ -6,42 +6,9 @@ using VkApi;
 
 namespace Vk.Clear
 {
-    public class Work : ApiVk
+    public partial class Work : ApiVk
     {
-        private readonly string v;
-
-        private Form1 form;
-
-        private int wallCount;
-
-        private int photoCount;
-
-        private int videoCount;
-
-        private int messagesCount;
-
-        private int bannedCount;
-
-        private int boardTopicsCount;
-
-        private int notesCount;
-
-        private int followersCount;
-
-        private string manager = "";
-
-        private int managerCount;
-
-        private int i;
-
-        public bool DelSavePhoto { get; set; }
-
-        public bool DelAlbumVideo { get; set; }
-
-        public bool DelBanned { get; set; }
-
-        public bool DelWallPhotoGroup { get; set; }
-
+        
         public Work(string v = "5.68")
         {
             this.v = v;
@@ -57,7 +24,10 @@ namespace Vk.Clear
             this.form = form;
         }
 
-        public void favePhotos()
+        /// <summary>
+        /// Delete photo of fave
+        /// </summary>
+        public void FavePhotos()
         {
             EnabledButton(false);
             JObject jObject = Send("fave.getPhotos","",v);
@@ -67,7 +37,7 @@ namespace Vk.Clear
             {
                 int owner_id = photo["owner_id"].Value<int>();
                 int item_id = photo["id"].Value<int>();
-                if (likesDelete("photo", owner_id, item_id) >= 0)
+                if (LikesDelete("photo", owner_id, item_id) >= 0)
                     WriteLog("Удаленно фото из закладок " + ++i + "/" + count);
                 Thread.Sleep(1000);
             }
@@ -76,7 +46,10 @@ namespace Vk.Clear
             WriteLog("Удаленны фото из закладок");
         }
 
-        public void faveVideo()
+        /// <summary>
+        /// Delete video of fave
+        /// </summary>
+        public void FaveVideo()
         {
             EnabledButton(false);
             JObject jObject = Send("fave.getVideos", "", v);
@@ -86,7 +59,7 @@ namespace Vk.Clear
             {
                 int owner_id = photo["owner_id"].Value<int>();
                 int item_id = photo["id"].Value<int>();
-                if (likesDelete("video", owner_id, item_id) >= 0)
+                if (LikesDelete("video", owner_id, item_id) >= 0)
                     WriteLog("Удаленно видео из закладок " + ++i + "/" + count);
                 Thread.Sleep(1000);
             }
@@ -95,26 +68,33 @@ namespace Vk.Clear
             WriteLog("Удаленны фото из закладок");
         }
 
-        public void favePost()
+        /// <summary>
+        /// Delete post of fave
+        /// </summary>
+        /// <param name="w_count">Count element</param>
+        public void FavePost(object w_count)
         {
+            int wcount = int.Parse(w_count.ToString());
             try
             {
                 EnabledButton(false);
-                JObject jObject = Send("fave.getPosts", "count=100", v);
+                JObject jObject = Send("fave.getPosts", "count=" + wcount, v);
                 int count = jObject["response"]["count"].Value<int>();
                 wallCount = wallCount == 0 ? count : wallCount;
                 count = count > 100 ? 100 : count;
                 foreach (JToken post in jObject["response"]["items"])
                 {
-                    if (likesDelete("post", post["owner_id"].Value<int>(), post["id"].Value<int>()) >= 0)
+                    if (LikesDelete(post["post_type"].ToString(), post["owner_id"].Value<int>(), post["id"].Value<int>()) >= 0)
                     {
                         WriteLog("Удаленно постов из закладок " + ++i + "/" + wallCount);
                     }
                     Thread.Sleep(1000);
                 }
-                if (count > 0) favePost();
-            }catch(Exception er)
+                if (count > 0) FavePost(wcount);
+            }
+            catch (NullReferenceException er)
             {
+                FavePost(wcount + 500);
                 WriteLog(er.Message);
             }
             finally
@@ -126,7 +106,10 @@ namespace Vk.Clear
             }
         }
 
-        public void faveUsers()
+        /// <summary>
+        /// Delete user of fave
+        /// </summary>
+        public void FaveUsers()
         {
             EnabledButton(false);
             JObject jObject = Send("fave.getUsers", "");
@@ -134,7 +117,7 @@ namespace Vk.Clear
             if (count > 50) jObject = Send("fave.getUsers", "count=" + count);
             foreach(JToken users in jObject["response"]["items"])
             {
-                if(removeFaveUser(users["id"].Value<int>()) > 0)
+                if(RemoveFaveUser(users["id"].Value<int>()) > 0)
                 {
                     WriteLog("Удаленно пользователей из зкаладок " + ++i + "/" + count);
                     Thread.Sleep(1000);
@@ -145,14 +128,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
-        private int removeFaveUser(int user_id)
-        {
-            Thread.Sleep(500);
-            JObject jObject = Send("fave.removeUser", "user_id=" + user_id);
-            return jObject["response"].Value<int>();
-        }
-
-        public void faveLink()
+        /// <summary>
+        /// Delete link of fave
+        /// </summary>
+        public void FaveLink()
         {
             EnabledButton(false);
             JObject jObject = Send("fave.getLinks", "",v);
@@ -160,7 +139,7 @@ namespace Vk.Clear
             if (count > 50) jObject = Send("fave.getLinks", "count=" + count,v);
             foreach (JToken link in jObject["response"]["items"])
             {
-                if(removeLink(link["id"].ToString()) > 0)
+                if(RemoveLink(link["id"].ToString()) > 0)
                 {
                     WriteLog("Удалено ссылок из закладок " + ++i + "/" + count);
                     Thread.Sleep(1000);
@@ -171,22 +150,9 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
-        private int removeLink(string link_id)
-        {
-            Thread.Sleep(500);
-            JObject jObject = Send("fave.removeLink", "link_id=" + link_id,v);
-            return jObject["response"].Value<int>();
-        }
-
-        private int likesDelete(string type,int owner_id,int item_id)
-        {
-            Thread.Sleep(500);
-            JObject jObject = Send("likes.delete",
-                String.Format("type={0}&owner_id={1}&item_id={2}",
-                type,owner_id,item_id),v);
-            return jObject["response"]["likes"].Value<int>();
-        }
-
+        /// <summary>
+        /// Out of group
+        /// </summary>
         public void Groups()
         {
             EnabledButton(false);
@@ -204,6 +170,10 @@ namespace Vk.Clear
             i = 0;
         }
 
+        /// <summary>
+        /// Clear blacklist in group
+        /// </summary>
+        /// <param name="groupId">Group id</param>
         public void GroupsBanned(object groupId)
         {
             EnabledButton(false);
@@ -225,6 +195,9 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete friends
+        /// </summary>
         public void Friends()
         {
             EnabledButton(false);
@@ -240,6 +213,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete post on wall
+        /// </summary>
+        /// <param name="ownerId">User id or group id</param>
         public void Wall(object ownerId)
         {
             EnabledButton(false);
@@ -261,6 +238,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete photo in group or user
+        /// </summary>
+        /// <param name="ownerId">Group id or user id</param>
         public void Photos(object ownerId)
         {
             EnabledButton(false);
@@ -292,26 +273,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
-        private void PhotosWall(string ownerId)
-        {
-            Thread.Sleep(1000);
-            JObject jObject = Send("photos.get", "owner_id=" + ownerId + "&album_id=wall&count=200&rev=1");
-            int num = jObject["response"]["count"].Value<int>();
-            photoCount = photoCount == 0 ? num : photoCount;
-            num = num > 200 ? 200 : num;
-            for (int i = 1; i < num; i++)
-            {
-                int ownerIdPw = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int photoId = jObject["response"]["items"][i]["id"].Value<int>();
-                PhotoDelete(ownerIdPw, photoId, ++this.i, photoCount);
-            }
-            if (num > 0 && i < 1000)
-                PhotosWall(ownerId);
-            i = 0;
-            photoCount = 0;
-            WriteLog("Удалили (максимум 1000) за раз");
-        }
-
+        /// <summary>
+        /// Delete albums
+        /// </summary>
+        /// <param name="ownerId">Group or user id</param>
         public void PhotosAlbum(object ownerId)
         {
             EnabledButton(false);
@@ -328,6 +293,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete videos
+        /// </summary>
+        /// <param name="ownerId">Group or user id</param>
         public void Video(object ownerId)
         {
             EnabledButton(false);
@@ -354,6 +323,11 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete audios
+        /// </summary>
+        /// <param name="ownerId">User or group id</param>
+        /// Here not work method, because app not officall and not get audio
         public void Audio(object ownerId)
         {
             EnabledButton(false);
@@ -361,6 +335,9 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete messages
+        /// </summary>
         public void Messages()
         {
             EnabledButton(false);
@@ -382,6 +359,9 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete news list's
+        /// </summary>
         public void NewsfeedLists()
         {
             EnabledButton(false);
@@ -396,6 +376,9 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Clear blacklist current user
+        /// </summary>
         public void AccountBanned()
         {
             EnabledButton(false);
@@ -416,6 +399,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// In group delete topic's
+        /// </summary>
+        /// <param name="groupId">Group id</param>
         public void BoardTopics(object groupId)
         {
             EnabledButton(false);
@@ -437,6 +424,9 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete notes
+        /// </summary>
         public void Notes()
         {
             EnabledButton(false);
@@ -457,6 +447,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete doc
+        /// </summary>
+        /// <param name="ownerId">Group id or user id</param>
         public void Docs(object ownerId)
         {
             EnabledButton(false);
@@ -478,6 +472,9 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete (banned) followers user
+        /// </summary>
         public void Followers()
         {
             EnabledButton(false);
@@ -498,6 +495,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
+        /// <summary>
+        /// Delete member died or banned
+        /// </summary>
+        /// <param name="groupId">Group id</param>
         public void GroupsMembersDeleted(object groupId)
         {
             EnabledButton(false);
@@ -519,32 +520,10 @@ namespace Vk.Clear
             EnabledButton(true);
         }
 
-        private JObject GetMembers(object groupId, ref List<int> deletedUsers, int offset)
-        {
-            Thread.Sleep(500);
-            JObject jObject = Send("groups.getMembers", param: string.Concat("group_id=", groupId, "&offset=", offset, "&fields=first_name"));
-            AddDeletedUsers(ref deletedUsers, jObject);
-            return jObject;
-        }
-
-        private void AddDeletedUsers(ref List<int> del, JObject get)
-        {
-            int count = JArray.Parse(get["response"]["items"].ToString()).Count;
-            for (int i = 0; i < count; i++)
-            {
-                string deactivated = (get["response"]["items"][i]["deactivated"] ?? "").ToString();
-                if (deactivated == "deleted")
-                {
-                    del.Add(get["response"]["items"][i]["id"].Value<int>());
-                }
-                else if (DelBanned && deactivated == "banned")
-                {
-                    del.Add(get["response"]["items"][i]["id"].Value<int>());
-                }
-                WriteLog("Найденно мертвых " + del.Count);
-            }
-        }
-
+        /// <summary>
+        /// Delete all members
+        /// </summary>
+        /// <param name="groupId">Group id</param>
         public void GroupsMembers(object groupId)
         {
             EnabledButton(false);
@@ -565,200 +544,6 @@ namespace Vk.Clear
             managerCount = 0;
             WriteLog("Подписчики удалены");
             EnabledButton(true);
-        }
-
-        private void GroupsRemoveUser(int groupId, int userId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("groups.removeUser", string.Concat("group_id=", groupId, "&user_id=", userId), v);
-            WriteLog(string.Concat("Удалено подписчиков ", i, " из ", count));
-        }
-
-        private string GroupsManagers(object groupId, ref int count)
-        {
-            if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
-            JObject jObject = Send("groups.getMembers", "group_id=" + groupId + "&filter=managers", v);
-            string text = "";
-            count = jObject["response"]["count"].Value<int>();
-            for (int i = 0; i < count; i++)
-                text = text + jObject["response"]["items"][i]["id"] + ",";
-            return text.Substring(0, text.Length - 1);
-        }
-
-        private void FollowersDelete(int userId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("account.banUser", "user_id=" + userId, v);
-            WriteLog(string.Concat("Удаленно подписчиков ", i, " из ", count));
-        }
-
-        private void DocsDelete(int docId, int ownerId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("docs.delete", string.Concat("owner_id=", ownerId, "&doc_id=", docId), v);
-            WriteLog(string.Concat("Удалено документов ", i, " из ", count));
-        }
-
-        private void NotesDelete(int noteId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("notes.delete", "note_id=" + noteId, v);
-            WriteLog(string.Concat("Удалено заметок ", i, " из ", count));
-        }
-
-        private void BoardDeleteTopic(int groupId, int topicId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("board.deleteTopic", string.Concat("group_id=", groupId, "&topic_id=", topicId), v);
-            WriteLog(string.Concat("Удалено обсуждений ", i, " из ", count));
-        }
-
-        private void AccountUnban(int userId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("account.unbanUser", "user_id=" + userId, v);
-            WriteLog(string.Concat("Убранно из бана: ", i, " из ", count));
-        }
-
-        private void NewsfeedDelete(int listId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("newsfeed.deleteList", "list_id=" + listId, v);
-            WriteLog(string.Concat("Удалено новостных списков ", i, " из ", count));
-        }
-
-        private int MessageHistory(int userId)
-        {
-            Thread.Sleep(1000);
-            JObject jObject = Send("messages.getHistory", "user_id=" + userId, v);
-            return jObject["response"]["count"].Value<int>();
-        }
-
-        private void MessagesDelete(int userId, int chatId, int i, int count)
-        {
-            Thread.Sleep(500);
-            int dialogId = chatId > 0 ? chatId : userId;
-            if (chatId > 0)
-                Send("messages.deleteDialog", "chat_id=" + dialogId, v);
-            else
-                Send("messages.deleteDialog", "user_id=" + dialogId, v);
-            if (userId > 0 && MessageHistory(userId) > 10000 && chatId < 0)
-                MessagesDelete(userId, chatId, i, count);
-            WriteLog(string.Concat("Удалено диалогов ", i, " из ", count));
-        }
-
-        /*
-        private void AudioDelete(int ownerId, int audioId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("audio.delete", string.Concat("audio_id=", audioId, "&owner_id=", ownerId), _v);
-            WriteLog(string.Concat("Удалено аудиозаписей ", i, " из ", count));
-        }*/
-
-        private void VideoAlbum(object ownerId)
-        {
-            Thread.Sleep(500);
-            JObject jObject = Send("video.getAlbums", "owner_id=" + ownerId + "&count=100", v);
-            int count = jObject["response"]["count"].Value<int>();
-            videoCount = videoCount == 0 ? count : videoCount;
-            count = count > 100 ? 100 : count;
-            for (int i = 0; i < count; i++)
-            {
-                int ownerId2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int albumId = jObject["response"]["items"][i]["id"].Value<int>();
-                VideoAlbumDelete(ownerId2, albumId, ++this.i, videoCount);
-            }
-            if (count > 0)
-                VideoAlbum(ownerId);
-            i = 0;
-            videoCount = 0;
-            WriteLog("Видео и видеоальбомы удалены");
-        }
-
-        private void VideoAlbumDelete(int ownerId, int albumId, int i, int count)
-        {
-            int num = ownerId < 0 ? Math.Abs(ownerId) : 0;
-            Send("video.deleteAlbum", string.Concat("group_id=", num, "&album_id=", albumId), v);
-            WriteLog(string.Concat("Удалено видеоальбомов ", i, " из ", count));
-        }
-
-        private void VideoDelete(int videoId, int ownerId, int targetId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("video.delete", string.Concat("video_id=", videoId, "&owner_id=", ownerId, "&target_id=", targetId), v);
-            WriteLog(string.Concat("Удалено видео ", i, " из ", count));
-        }
-
-        private void PhotosSaved()
-        {
-            JObject jObject = Send("photos.get", "album_id=saved", v);
-            int count = jObject["response"]["count"].Value<int>();
-            photoCount = photoCount == 0 ? count : photoCount;
-            count = count >= 1000 ? 1000 : count;
-            for (int i = 0; i < count; i++)
-            {
-                int ownerId2 = jObject["response"]["items"][i]["owner_id"].Value<int>();
-                int phtoId = jObject["response"]["items"][i]["id"].Value<int>();
-                PhotoDelete(ownerId2, phtoId, ++this.i, photoCount, "Удалено сохраненых фотографий ");
-            }
-            if (count > 0)
-                PhotosSaved();
-            WriteLog("Сохраненые фотографии удалены");
-            i = 0;
-            photoCount = 0;
-        }
-
-        private void PhotosAlbumDelete(int ownerId, int albumId, int i, int count)
-        {
-            Thread.Sleep(500);
-            int num = ownerId < 0 ? ownerId : 0;
-            Send("photos.deleteAlbum", string.Concat("album_id=", albumId, "&group_id=", num), v);
-            WriteLog(string.Concat("Удаленно альбомов ", i, " из ", count));
-        }
-
-        private void PhotoDelete(int ownerId, int photoId, int i, int count, string text = "Удалено фотографий ")
-        {
-            Thread.Sleep(1000);
-            Send("photos.delete", string.Concat("owner_id=", ownerId, "&photo_id=", photoId), v);
-            WriteLog(string.Concat(text, i, " из ", count));
-        }
-
-        private void FriendsDelete(int userId, int i, int count)
-        {
-            Thread.Sleep(1000);
-            Send("friends.delete", "user_id=" + userId, v);
-            WriteLog(string.Concat("Удаленно друзей ", i, " из ", count));
-        }
-
-        private void GroupsUnbanUser(int groupId, int userId, int i, int count)
-        {
-            Thread.Sleep(500);
-            Send("groups.unbanUser", string.Concat("group_id=", groupId, "&user_id=", userId), v);
-            WriteLog(string.Concat("Убрано из бана ", i, " из ", count));
-        }
-
-        private void LeaveGroups(int groupId, int i, int count)
-        {
-            Thread.Sleep(1000);
-            Send("groups.leave", "group_id=" + groupId, v);
-            WriteLog(string.Concat("Покинуто ", i, " из ", count));
-        }
-
-        private void WallDelete(int ownerId, int postId, int i = 0, int count = 0)
-        {
-            Thread.Sleep(500);
-            Send("wall.delete", string.Concat("owner_id=", ownerId, "&post_id=", postId), v);
-            WriteLog(string.Concat("Удалено записей ", i, " из ", count));
-        }
-
-        private void WriteLog(string text)
-        {
-            form.SetTextLabel(text);
-        }
-
-        private void EnabledButton(bool btnEnabled)
-        {
-            form.SetButtonEnabled(btnEnabled);
         }
     }
 }

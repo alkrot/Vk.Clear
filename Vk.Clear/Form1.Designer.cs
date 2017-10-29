@@ -19,6 +19,7 @@ namespace Vk.Clear
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btnGroupsLeave = new System.Windows.Forms.Button();
             this._label1 = new System.Windows.Forms.Label();
@@ -46,10 +47,13 @@ namespace Vk.Clear
             this.btnDeletedDieUsers = new System.Windows.Forms.Button();
             this.btnDeleteMembers = new System.Windows.Forms.Button();
             this.btnDeleteTopic = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.остановитьЗаданиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this._tabPage1.SuspendLayout();
             this._tabPage2.SuspendLayout();
             this._tabPage3.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnGroupsLeave
@@ -337,13 +341,29 @@ namespace Vk.Clear
             this.btnDeleteTopic.UseVisualStyleBackColor = true;
             this.btnDeleteTopic.Click += new System.EventHandler(this.btnDeleteTopic_Click);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.остановитьЗаданиеToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(185, 26);
+            // 
+            // остановитьЗаданиеToolStripMenuItem
+            // 
+            this.остановитьЗаданиеToolStripMenuItem.Name = "остановитьЗаданиеToolStripMenuItem";
+            this.остановитьЗаданиеToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.остановитьЗаданиеToolStripMenuItem.Text = "Остановить задание";
+            this.остановитьЗаданиеToolStripMenuItem.Click += new System.EventHandler(this.остановитьЗаданиеToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(245, 266);
+            this.ContextMenuStrip = this.contextMenuStrip1;
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this._label1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -355,6 +375,7 @@ namespace Vk.Clear
             this._tabPage1.ResumeLayout(false);
             this._tabPage2.ResumeLayout(false);
             this._tabPage3.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -405,5 +426,7 @@ namespace Vk.Clear
         private Button btnDeleteLikePost;
         private Button btnRemoveFaveUsers;
         private Button btnRemoveLink;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem остановитьЗаданиеToolStripMenuItem;
     }
 }
