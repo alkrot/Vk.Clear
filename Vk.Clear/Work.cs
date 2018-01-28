@@ -6,19 +6,31 @@ using VkApi;
 
 namespace Vk.Clear
 {
+    /// <summary>
+    /// Class for work with vk api
+    /// </summary>
     public partial class Work : ApiVk
     {
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="v">Version vk api</param>
         public Work(string v = "5.68")
         {
             this.v = v;
         }
 
+        /// <summary>
+        /// send visited user
+        /// </summary>
         public void StatsTrackVisitor()
         {
             Send("stats.trackVisitor", "", v);
         }
-
+        /// <summary>
+        /// Forms uses
+        /// </summary>
+        /// <param name="form">form</param>
         public void AddForms(Form1 form)
         {
             this.form = form;

@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Vk.Clear
 {
@@ -36,12 +33,24 @@ namespace Vk.Clear
 
         private int i;
 
+        /// <summary>
+        /// If it's true, then delete saving photo
+        /// </summary>
         public bool DelSavePhoto { get; set; }
 
+        /// <summary>
+        /// If it's true then delete album video
+        /// </summary>
         public bool DelAlbumVideo { get; set; }
 
+        /// <summary>
+        /// If it's true then delete bannned users
+        /// </summary>
         public bool DelBanned { get; set; }
 
+        /// <summary>
+        /// If it's true then delete photo of album wall
+        /// </summary>
         public bool DelWallPhotoGroup { get; set; }
 
         /// <summary>

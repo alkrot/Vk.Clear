@@ -74,19 +74,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>UPMEu7RQwWbsyMuTrs03Sq4yMlHfDxK0tovOMwxEAH0=</dsig:DigestValue>
+        <dsig:DigestValue>+bbXRXjrPUPJjUPcNT112rfwhTlRRMGSP5Rt/Oi02EM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="VkApi.dll" size="7168">
-      <assemblyIdentity name="VkApi" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="VkApi.dll" size="8192">
+      <assemblyIdentity name="VkApi" version="1.0.0.5" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Qgg5NJ4dSXbRivXCtSSmiySTixf8WaitHrMhSJlcPJE=</dsig:DigestValue>
+        <dsig:DigestValue>E2CyUbkUy9t/u/Z9l2VYyIF5LTr41UcE2t4QUn9psY0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
